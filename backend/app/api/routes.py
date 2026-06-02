@@ -10,6 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from starlette.concurrency import run_in_threadpool
 
 from app.config import settings
 from app.data.fixtures import SAMPLES, build_canned_result
@@ -71,7 +72,9 @@ async def analyze(
         raise HTTPException(status_code=400, detail="Could not read any text from the contract.")
 
     try:
-        result = run_analysis(contract_text)
+        # run_analysis is blocking (sync OCI HTTP); off-load it so it doesn't
+        # stall the event loop and block other requests during the ~45s call.
+        result = await run_in_threadpool(run_analysis, contract_text)
     except Exception as exc:  # surface a clean error to the UI
         raise HTTPException(status_code=502, detail=f"Analysis failed: {exc}") from exc
 
@@ -97,7 +100,10 @@ async def chat(req: ChatRequest) -> ChatResponse:
         from app.pipeline.chat import answer_question
 
         try:
-            return answer_question(result, req.message, req.clause_id)
+            # answer_question is blocking (sync OCI HTTP); off-load it too.
+            return await run_in_threadpool(
+                answer_question, result, req.message, req.clause_id
+            )
         except Exception as exc:
             raise HTTPException(status_code=502, detail=f"Chat failed: {exc}") from exc
 

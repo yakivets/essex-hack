@@ -29,9 +29,10 @@ List the pre-loaded sample contracts shown on the landing page. Returns `Sample[
 
 ### `POST /api/analyze`
 The main endpoint. Accepts an uploaded file **or** pasted text **or** a sample id.
-- `multipart/form-data` with field `file` (PDF/DOCX), **or**
-- `application/json` body: `{ "text": "..." }`, **or**
-- `application/json` body: `{ "sample_id": "saas-msa" }`
+Always sent as `multipart/form-data` with exactly one of these fields:
+- `file` — the uploaded contract (PDF/DOCX), **or**
+- `text` — pasted contract text, **or**
+- `sample_id` — id of a built-in sample (e.g. `saas-msa`)
 
 Returns **`200`** with an `AnalysisResult` (see schema below). Processing is **synchronous** for the
 hackathon (target < 40s; real runs ~45s).

@@ -56,6 +56,11 @@ id(s) your answer relies on (1-3). If the contract doesn't address it, say so pl
 
 def answer_question(result: dict[str, Any], message: str, clause_id: str | None) -> ChatResponse:
     clauses = result["clauses"]
+    if not clauses:
+        return ChatResponse(
+            answer="I couldn't find any analysed clauses in this contract to answer from.",
+            citations=[],
+        )
     by_id = {c["id"]: c for c in clauses}
 
     # Retrieve the most relevant clauses; always include the focused clause.
