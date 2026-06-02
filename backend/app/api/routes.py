@@ -31,7 +31,11 @@ SAMPLES_DIR = Path(__file__).resolve().parent.parent / "data" / "samples"
 def _sample_text(sample_id: str) -> str:
     path = SAMPLES_DIR / f"{sample_id}.txt"
     if not path.exists():
-        path = SAMPLES_DIR / "saas-msa.txt"  # fallback
+        # Unknown/legacy id -> degrade to the first available sample instead of 500.
+        available = sorted(SAMPLES_DIR.glob("*.txt"))
+        if not available:
+            raise HTTPException(status_code=400, detail=f"Unknown sample '{sample_id}'.")
+        path = available[0]
     return path.read_text(encoding="utf-8")
 
 

@@ -2,19 +2,19 @@ import type { AnalysisResult, Sample } from "./types";
 
 export const mockSamples: Sample[] = [
   {
-    id: "saas-msa",
-    name: "SaaS Master Services Agreement",
-    description: "A vendor-friendly MSA with auto-renewal and broad indemnity.",
+    id: "dev-agency-agreement",
+    name: "Software Development Agreement",
+    description: "A developer-drafted agency contract — stacked with red flags (high risk).",
   },
   {
-    id: "freelance-nda",
-    name: "Mutual NDA",
-    description: "Two-page NDA from a prospective enterprise client.",
+    id: "saas-subscription",
+    name: "SaaS Subscription Agreement",
+    description: "Looks standard, but a few one-sided catches hide in the fine print (moderate risk).",
   },
   {
-    id: "office-lease",
-    name: "Commercial Office Lease",
-    description: "36-month lease with personal guarantee and CAM escalations.",
+    id: "mutual-nda",
+    name: "Mutual Non-Disclosure Agreement",
+    description: "A clean, balanced two-way NDA before partnership talks (low risk).",
   },
 ];
 
