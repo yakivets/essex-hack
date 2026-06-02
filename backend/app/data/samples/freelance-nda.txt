@@ -1,0 +1,33 @@
+MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is made between Northwind Ltd and the
+Recipient as of the Effective Date.
+
+1. CONFIDENTIAL INFORMATION
+"Confidential Information" means any non-public information disclosed by either party,
+whether marked confidential or not, that a reasonable person would understand to be
+confidential.
+
+2. OBLIGATIONS
+Each party agrees to use the other's Confidential Information solely to evaluate a potential
+business relationship and to protect it with at least the same care it uses for its own
+confidential information, but no less than reasonable care.
+
+3. TERM
+The confidentiality obligations in this Agreement survive for a period of five (5) years
+from the date of disclosure.
+
+4. NON-SOLICITATION
+For twelve (12) months, neither party shall solicit for employment any employee of the other
+party with whom it had contact during the evaluation.
+
+5. RETURN OF MATERIALS
+Upon written request, each party shall promptly return or destroy all Confidential
+Information of the other party.
+
+6. NO LICENSE
+Nothing in this Agreement grants any license or ownership rights in either party's
+intellectual property.
+
+7. GOVERNING LAW
+This Agreement is governed by the laws of England and Wales.
