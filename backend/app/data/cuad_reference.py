@@ -1,23 +1,54 @@
-"""Market-reference clause corpus (a small, CUAD-flavoured seed set).
+"""Market-reference clause corpus for benchmarking uploaded clauses.
 
-This stands in for the full CUAD-derived `cuad_clauses` collection. Each entry is
-a representative market clause with:
-  * category   — clause type (matches the categories the analyser emits)
-  * text       — example clause language (what we embed for similarity)
-  * typical    — one-line description of the market-standard version
-  * harshness  — 0..100, how aggressive THIS example is vs the market
+Primary source: `cuad_clauses.jsonl` — real clauses extracted from the CUAD legal
+corpus (category + harshness label per clause). When that file is present we build
+the reference set from it; otherwise we fall back to the small hand-written seed
+corpus below so the app still runs with no data file.
 
-Multiple entries per category span a harshness range, so we can place an uploaded
-clause on a percentile within its category. `scripts/ingest_cuad.py` embeds these
-into Oracle 23ai; the in-memory store auto-loads them on first use.
+Each reference record has:
+  * category   — coarse CUAD clause type (liability, payment, termination, …)
+  * text       — the real clause language (what we embed for similarity)
+  * typical    — one-line description of the market-standard version (by category)
+  * harshness  — 0..100, how aggressive THIS clause is vs the market
+
+`scripts/ingest_cuad.py` embeds these into Oracle 23ai; the in-memory store
+auto-loads them on first use (see `benchmark.ensure_reference_loaded`).
 """
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
+# Real CUAD-derived clauses (built on the data/cuad-ingest branch).
+_JSONL_PATH = Path(__file__).resolve().parent / "cuad_clauses.jsonl"
+
+# Cap how many clauses per category we load into the live store. The full file
+# has ~6.3k clauses; embedding all of them on first request (esp. via real OCI)
+# would be slow, so we take a balanced subset. The full file stays in the repo
+# for a one-off Oracle ingest, which can pass per_category=None.
+_DEFAULT_PER_CATEGORY = 50
+
+# CUAD harshness labels -> a 0..100 score (aligned with benchmark._RISK_HARSHNESS).
+_HARSHNESS_SCORE = {"high": 85.0, "medium": 60.0, "low": 30.0}
+
+# One readable "market typical" line per coarse CUAD category (shown in the UI).
+_CATEGORY_TYPICAL = {
+    "termination": "Termination for convenience with 30–60 days' notice; fair renewal",
+    "liability": "Liability capped at ~12 months of fees, mutual",
+    "payment": "Net-30 terms with late fees around 1–1.5% monthly",
+    "ip": "Each party keeps its own pre-existing IP; you own your data",
+    "obligations": "Balanced, mutual obligations without lock-ins",
+    "jurisdiction": "Neutral or your home jurisdiction",
+    "warranty": "Limited performance warranty with a cure remedy",
+    "penalty": "Liquidated damages that reasonably pre-estimate actual loss",
+    "confidentiality": "Mutual confidentiality with a 2–3 year survival period",
+}
+
+# Fallback hand-written seed corpus, used only if cuad_clauses.jsonl is absent.
 # (category, typical-description, [(harshness, example_text), ...])
-_CORPUS: list[tuple[str, str, list[tuple[int, str]]]] = [
+_FALLBACK_CORPUS: list[tuple[str, str, list[tuple[int, str]]]] = [
     (
         "Auto-renewal",
         "12-month renewal with 30–60 days' notice",
@@ -129,11 +160,40 @@ _CORPUS: list[tuple[str, str, list[tuple[int, str]]]] = [
 ]
 
 
-def reference_records() -> list[dict[str, Any]]:
-    """Flatten the corpus into vector-store records (without embeddings)."""
+def _records_from_jsonl(per_category: int | None) -> list[dict[str, Any]]:
+    """Build reference records from the real CUAD jsonl (balanced subset)."""
+    per_cat_count: dict[str, int] = {}
+    records: list[dict[str, Any]] = []
+    with _JSONL_PATH.open(encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            row = json.loads(line)
+            category = (row.get("category") or "").lower()
+            if not category:
+                continue
+            if per_category is not None and per_cat_count.get(category, 0) >= per_category:
+                continue
+            per_cat_count[category] = per_cat_count.get(category, 0) + 1
+            records.append(
+                {
+                    "id": row.get("id") or f"cuad{len(records)}",
+                    "category": category,
+                    "text": row.get("text") or "",
+                    "typical": _CATEGORY_TYPICAL.get(category, "Market-standard terms"),
+                    "harshness": _HARSHNESS_SCORE.get((row.get("harshness") or "").lower(), 60.0),
+                    "analysis_id": None,
+                }
+            )
+    return records
+
+
+def _records_from_fallback() -> list[dict[str, Any]]:
+    """Flatten the hand-written seed corpus into vector-store records."""
     records: list[dict[str, Any]] = []
     idx = 0
-    for category, typical, samples in _CORPUS:
+    for category, typical, samples in _FALLBACK_CORPUS:
         for harshness, text in samples:
             idx += 1
             records.append(
@@ -147,3 +207,16 @@ def reference_records() -> list[dict[str, Any]]:
                 }
             )
     return records
+
+
+def reference_records(per_category: int | None = _DEFAULT_PER_CATEGORY) -> list[dict[str, Any]]:
+    """Reference clauses (no embeddings). Real CUAD data if present, else the seed set.
+
+    `per_category` caps how many clauses per category are loaded into the live
+    store (None = no cap; used for a full Oracle ingest).
+    """
+    if _JSONL_PATH.exists():
+        records = _records_from_jsonl(per_category)
+        if records:
+            return records
+    return _records_from_fallback()

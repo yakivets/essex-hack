@@ -1,0 +1,63 @@
+SOFTWARE DEVELOPMENT & MAINTENANCE AGREEMENT
+
+This Software Development & Maintenance Agreement ("Agreement") is made between
+Pinnacle Digital Labs LLC ("Developer") and the undersigned client ("Client") as
+of the Effective Date. By signing, the Client agrees to the following terms.
+
+1. SERVICES AND DEPOSIT
+Developer shall design and build the software described in the Statement of Work.
+Client shall pay a non-refundable deposit equal to fifty percent (50%) of the total
+project fee before any work begins. The deposit is non-refundable under all
+circumstances, including if the Client terminates the project for any reason.
+
+2. INTELLECTUAL PROPERTY
+All intellectual property, source code, designs, and deliverables created under this
+Agreement shall remain the sole and exclusive property of Developer until the Client
+has paid all amounts owed in full. Notwithstanding payment, Developer retains a
+perpetual, irrevocable, worldwide license to reuse, resell, and sublicense any code,
+components, or know-how developed for the Client, including the Client's
+contributed materials and business logic.
+
+3. MAINTENANCE RETAINER AND AUTO-RENEWAL
+Upon delivery, the Client is automatically enrolled in a monthly maintenance retainer
+of $4,500 per month. This retainer renews automatically for successive twelve (12)
+month terms unless the Client provides written notice of cancellation at least ninety
+(90) days before the end of the then-current term. Early cancellation requires payment
+of fifty percent (50%) of all remaining retainer fees as liquidated damages.
+
+4. EXCLUSIVITY
+During the term of this Agreement and for two (2) years thereafter, the Client shall
+not engage, hire, or contract any other software developer, agency, or freelancer for
+any work similar to the Services without Developer's prior written consent.
+
+5. INDEMNIFICATION
+The Client shall indemnify, defend, and hold harmless Developer, its officers, and
+agents from any and all claims, damages, losses, and expenses of any kind arising out
+of or relating to the software or the Client's business, without limitation and
+regardless of cause, including Developer's own negligence.
+
+6. LIMITATION OF LIABILITY
+The Services and all deliverables are provided "AS IS" without warranty of any kind.
+Developer's total liability under this Agreement shall not exceed one hundred dollars
+($100), and Developer shall not be liable for any defects, downtime, data loss, or
+damages of any kind.
+
+7. PERSONAL GUARANTEE
+The individual signing on behalf of the Client personally and unconditionally
+guarantees all of the Client's obligations under this Agreement, including all fees,
+retainers, and liquidated damages, and waives any right to require Developer to proceed
+against the Client first.
+
+8. CONFIDENTIALITY
+The Client shall keep all terms of this Agreement and all information about Developer
+strictly confidential in perpetuity. This obligation binds the Client only and does
+not apply to Developer.
+
+9. LATE PAYMENT
+Any amount not paid when due shall accrue interest at five percent (5%) per month, and
+Developer may suspend all services and revoke all licenses immediately upon any late
+payment.
+
+10. GOVERNING LAW
+This Agreement shall be governed by the laws of the Cayman Islands, and the Client
+consents to the exclusive jurisdiction of the courts located there for any dispute.

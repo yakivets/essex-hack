@@ -1,0 +1,58 @@
+SAAS SUBSCRIPTION AGREEMENT
+
+This SaaS Subscription Agreement ("Agreement") is between Northwind Analytics Inc.
+("Provider") and the customer identified in the Order Form ("Customer"). It governs
+Customer's subscription to Provider's cloud analytics platform (the "Service").
+
+1. SUBSCRIPTION AND TERM
+Provider grants Customer a non-exclusive subscription to access the Service for the
+initial term stated in the Order Form (the "Initial Term"), beginning on the start
+date set out there.
+
+2. FEES
+Customer shall pay the subscription fees set out in the Order Form annually in advance.
+Provider shall invoice Customer at the start of each term, and undisputed invoices are
+due within thirty (30) days.
+
+3. RENEWAL
+This Agreement renews automatically for successive twelve (12) month terms unless
+either party gives written notice of non-renewal at least thirty (30) days before the
+end of the then-current term. Provider may increase the subscription fees by up to
+seven percent (7%) for each renewal term.
+
+4. SERVICE LEVELS
+Provider will use commercially reasonable efforts to make the Service available 99.5%
+of the time each month, excluding scheduled maintenance. If availability falls below
+this target, Customer's sole remedy is a service credit of up to ten percent (10%) of
+the monthly fee, applied on request.
+
+5. CUSTOMER DATA
+Customer retains ownership of the data it uploads to the Service ("Customer Data").
+Provider may use aggregated and de-identified Customer Data to operate, analyse, and
+improve its products and services, and to develop new features. Provider processes
+Customer Data in accordance with its standard Data Processing Addendum.
+
+6. CONFIDENTIALITY
+Each party shall protect the other's confidential information with reasonable care and
+use it only to perform under this Agreement. These obligations are mutual and survive
+for three (3) years after termination.
+
+7. LIMITATION OF LIABILITY
+Provider's total aggregate liability arising out of this Agreement shall not exceed the
+fees paid by Customer in the three (3) months preceding the event giving rise to
+the claim. Neither party is liable for indirect or consequential damages.
+
+8. ASSIGNMENT
+Provider may assign or transfer this Agreement, in whole or in part, to any affiliate
+or successor in connection with a merger, acquisition, or sale of assets. Customer may
+not assign this Agreement without Provider's prior written consent.
+
+9. TERMINATION
+Either party may terminate this Agreement for the other party's material breach that
+remains uncured thirty (30) days after written notice. On termination, Customer's
+access to the Service ends and Provider will make Customer Data available for export
+for thirty (30) days, after which it may be deleted.
+
+10. GOVERNING LAW
+This Agreement is governed by the laws of the State of New York, and the parties submit
+to the exclusive jurisdiction of the courts located in New York County.

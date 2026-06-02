@@ -33,6 +33,9 @@ dist-ssr/
 chroma/
 .chroma/
 *.sqlite3
+# Raw CUAD source dump (~40MB) — keep only the derived cuad_clauses.jsonl in repo.
+CUAD_v1.json
+**/CUAD_v1.json
 
 # --- OS / editor ---
 .DS_Store
