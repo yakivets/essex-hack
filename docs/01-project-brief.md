@@ -1,6 +1,7 @@
 # PactPilot — Project Brief
 
-> Working name: **PactPilot** (provisional — easy to rename). Tagline: _"Know what you're signing."_
+> Working name: **PactPilot** (provisional — easy to rename). Tagline: _"Know what you're signing."_  
+> **Requirements & constraints:** see [`00-prd.md`](00-prd.md) (FR/NFR IDs, MoSCoW, judging matrix, team RACI).
 
 ## The one-liner
 

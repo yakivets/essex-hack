@@ -10,6 +10,8 @@ in the linked docs.
 - Backend build → [`05-backend-plan.md`](05-backend-plan.md)
 - Oracle + deploy → [`06-oracle-setup.md`](06-oracle-setup.md)
 - Team & onboarding → [`07-engineer-context.md`](07-engineer-context.md)
+- Architecture diagrams → [`09-architecture-diagrams.md`](09-architecture-diagrams.md)
+- MVP execution plan → [`10-mvp-execution-plan.md`](10-mvp-execution-plan.md)
 
 ## Architecture (one picture)
 
