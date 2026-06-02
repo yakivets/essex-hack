@@ -7,28 +7,34 @@ backend owners.**
 ## What we're building (10-second version)
 PactPilot — a no-login web app where a founder drops in a contract and gets a 30-second risk
 verdict, an interactive risk-highlighted document, market benchmarks, and a Q&A chat. Stack:
-Lovable UI → FastAPI → LangChain/LangGraph → OCI GenAI + Oracle 23ai. Full context:
+Lovable-built UI → FastAPI (no LangChain) → OCI GenAI + Oracle 23ai. Full context:
 [01-project-brief.md](01-project-brief.md).
+
+**OCI-first — and none of us have used OCI before.** The *entire deployed solution* runs on Oracle
+Cloud (UI bundle + API + GenAI + 23ai + Object Storage); no Vercel/Netlify/third-party hosting. The
+lead owns the OCI account and **mentors the team against [08-oci-onboarding.md](08-oci-onboarding.md)**
+— start there before touching any cloud resource. `FAKE_OCI=1` + mock mode keep everyone unblocked
+during dev, but the judged demo must run on real OCI.
 
 ## How we avoid collisions
 The **API contract is the seam.** UI builds against mock JSON; backend builds the real JSON; both
 match the contract exactly; merge = flip `VITE_API_BASE_URL`. The backend returns a **canned
 `AnalysisResult` from hour 1**, so nobody is blocked waiting.
 
-## Team split (7 people)
+## Team split (6 people: 2 strong · 2 intermediate · 2 non-tech)
 | Person | Pod | Owns | Start with |
 |---|---|---|---|
-| **You (Lead)** | Glue + Infra | Architecture, API contract, **OCI setup & deploy**, integration, demo | [06-oracle-setup.md](06-oracle-setup.md) |
-| **Advanced** | AI Core | LangGraph graph, vector store, benchmark + risk nodes, chat RAG | [05-backend-plan.md](05-backend-plan.md) Ph 3–5 |
-| **Intermediate A** | Doc Pipeline | Ingestion + segmentation (text + char offsets) | 05 Phase 1 |
-| **Intermediate B** | Analysis | classify / extract / summary / missing nodes | 05 Phase 4 |
-| **Intermediate C** | Frontend | Lovable build, the document cockpit, chat UI, wiring `api.ts` | [04-lovable-ui-prompt.md](04-lovable-ui-prompt.md) |
-| **Beginner A** | Frontend (pair w/ Inter C) | UI components, fairness meter, risk minimap, polish, empty/null states | 04 |
-| **Beginner B** | Data & QA | CUAD subset prep, sample contracts + mock JSON, manual testing, demo script | 05 Phase 3 + samples |
+| **Strong #1 (Lead)** | Glue + Infra | Architecture, API contract, **OCI setup & deploy**, mentoring the team on OCI, integration, demo wiring | [08-oci-onboarding.md](08-oci-onboarding.md) → [06-oracle-setup.md](06-oracle-setup.md) |
+| **Strong #2** | AI Core | the async analysis orchestrator, vector store (23ai SQL), benchmark + risk steps, chat RAG | [05-backend-plan.md](05-backend-plan.md) Ph 3–5 |
+| **Intermediate A** | Doc Pipeline | ingestion + segmentation (text + char offsets) | 05 Phase 1 |
+| **Intermediate B** | Analysis steps | classify / extract / summary / missing steps | 05 Phase 4 |
+| **Non-tech A** | Frontend (Lovable) | drive Lovable from the prompt, click-test the 3 sync points, polish/empty states | [04-lovable-ui-prompt.md](04-lovable-ui-prompt.md) |
+| **Non-tech B** | Data & QA + Pitch | CUAD subset prep, sample contracts (incl. the demo "villain") + mock JSON, manual testing, **demo script + slides** | 05 Phase 3 + samples |
 
-Principle: advanced owns the spine; beginners are always paired and get **bounded** tasks
-(a component, a dataset) not open-ended ambiguity; the risky external dependency (OCI) sits with
-the lead.
+Principle: the **two strong engineers own the spine** (OCI + AI core + integration); intermediates take
+bounded backend slices; non-tech own the **prompt-driven UI** (Lovable) and **data/QA/pitch** — always
+bounded tasks, not open-ended ambiguity. The risky external dependency (OCI) sits with the lead, who
+mentors. With only 2 strong engineers, keep OCI off the critical path by starting the account **today**.
 
 ## The interfaces between pods (so work merges cleanly)
 - **Doc Pipeline → Analysis:** `segment(text) -> list[Clause{id,heading,text,start,end}]`. That list

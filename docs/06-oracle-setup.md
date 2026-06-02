@@ -3,6 +3,12 @@
 > Owner: **team lead**. Do the pre-event checklist **before** the hackathon so nothing here is a
 > surprise on the clock. Budget: $300 free credits + Always Free resources. Realistic spend: a few $.
 
+> **OCI-first is a hard requirement.** The entire deployed solution must run on Oracle Cloud — no
+> Vercel/Netlify/third-party hosting anywhere in the product. **New to OCI? Read
+> [`08-oci-onboarding.md`](08-oci-onboarding.md) first** — it's the plain-English mentoring guide
+> (mental model, the five services we use, auth, a day-1 hands-on path, and an "I'm stuck" playbook).
+> This file is the operational checklist; 08 is the learning path.
+
 ## ⚠️ The one irreversible decision: home region
 OCI **Generative AI runs only in certain regions**, and your tenancy's **home region is chosen at
 signup and can never be changed**. Pick a GenAI-supported region as your home region *before*
@@ -32,18 +38,19 @@ Only AI inference spends credits. Danger isn't cost — it's forgetting to tear 
 ## Generative AI access
 - In the console: **Analytics & AI → Generative AI**. Confirm chat + embedding models are available
   in your region; note the **model OCIDs** and your **compartment OCID**.
-- Code uses `langchain_community`:
-  - `from langchain_community.chat_models import ChatOCIGenAI`
-  - `from langchain_community.embeddings import OCIGenAIEmbeddings`
+- Code uses the **raw `oci` Python SDK** (no LangChain):
+  - `from oci.generative_ai_inference import GenerativeAiInferenceClient` — `.chat(...)` for all
+    reasoning, `.embed_text(...)` for embeddings.
   - Auth via the `~/.oci/config` file (the SDK reads it automatically); pass `compartment_id`,
-    `model_id`, `service_endpoint` (region-specific GenAI endpoint).
+    `model_id` (the model OCID), and the region-specific GenAI `service_endpoint`.
 
 ## Autonomous DB 23ai — the vector store
 - Create **Always Free ADB**, workload type "Data Warehouse" or "Transaction Processing" (either
   works); choose the **23ai** version so AI Vector Search is available.
 - Download the **wallet** (mTLS) → backend connects with `oracledb` + `TNS_ADMIN` pointing at the
   unzipped wallet.
-- LangChain `OracleVS` (`langchain_community.vectorstores.oraclevs`) creates/queries vector tables.
+- Vector tables use 23ai's native `VECTOR` column; we create/query them with **plain SQL via
+  `oracledb`** (`VECTOR_DISTANCE(...)` for similarity) — no `OracleVS`/LangChain.
 - Two collections/tables: `cuad_clauses` (built once by `scripts/ingest_cuad.py`) and `doc_clauses`
   (per-request, for chat RAG).
 
@@ -73,11 +80,22 @@ FAKE_OCI=0          # set 1 to run the pipeline with stubs, no OCI needed
    the `.env` mounted. (Or run `uvicorn` under `systemd` for simplicity.)
 3. Confirm `GET /api/samples` responds from the VM's public IP.
 
-**Frontend:** host the Lovable-built static app (its own hosting, or Vercel, or the same VM behind
-nginx). Set `VITE_API_BASE_URL` to the backend's public URL and rebuild.
+**Frontend → OCI (no third-party hosting):** Lovable is the UI *builder*, never the host. Pull its
+generated React/Vite codebase into `frontend/`, build the static bundle (`npm run build`), and serve
+it **from OCI**. Two OCI-native options:
+- **Recommended — nginx on the same Ampere VM** as the API: one box, **same origin** (no CORS, one
+  demo URL), `VITE_API_BASE_URL` can be left empty. nginx serves `/` (the static bundle) and proxies
+  `/api/` to uvicorn on `:8000`.
+- **Alternative — OCI Object Storage static website**: upload the `dist/` build to a bucket configured
+  for website hosting; set `VITE_API_BASE_URL` to the API's public URL and rebuild.
 
-**Sponsor story:** the AI (GenAI), the vector data (23ai), the files (Object Storage), and the
-running service (Compute) are all on OCI — Oracle is the engine, not a checkbox.
+There is **no Vercel / Netlify / Lovable hosting** in the deployed product — the entire solution
+(frontend bundle + API + GenAI + 23ai + Object Storage) lives in OCI. That is a hackathon hard
+requirement, not a preference.
+
+**Sponsor story:** the UI (static bundle on Compute/Object Storage), the AI (GenAI), the vector data
+(23ai), the files (Object Storage), and the running API (Compute) are **all on OCI** — Oracle is the
+engine, not a checkbox.
 
 ## Teardown (after the event)
 Delete the `hackathon` compartment's paid resources (Compute if not Always Free, any non-free ADB).

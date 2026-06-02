@@ -17,7 +17,7 @@ lawyer-quality first pass: a plain-English verdict, a clause-by-clause risk brea
   2. Integration with **OCI AI services** (Oracle is the main sponsor — non-negotiable)
   3. A **vector database** for semantic search
   4. A **deployed** AI-enabled app (not just a notebook)
-- **Team:** 7 people — 1 lead + 1 advanced + 3 intermediate + 2 beginner.
+- **Team:** 6 people — 2 strong engineers (one is lead) + 2 intermediate + 2 non-technical.
 
 ## The problem
 

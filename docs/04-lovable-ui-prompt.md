@@ -72,8 +72,12 @@ our FastAPI backend via the [API contract](03-api-contract.md). The UI must work
 
 ## After Lovable generates
 
-- Export the project / connect the GitHub repo into `frontend/`.
-- Create `frontend/.env` with `VITE_API_BASE_URL=` (empty → mock mode).
+- Export the project / connect the GitHub repo into `frontend/`. **Lovable does not host the product**
+  — it's only the builder. From here it's our code: `npm run build` → static bundle served **from OCI**
+  (nginx on the Ampere VM, or an Object Storage static site — see [06-oracle-setup.md](06-oracle-setup.md)).
+  No Vercel/Netlify.
+- Create `frontend/.env` with `VITE_API_BASE_URL=` (empty → mock mode; also fine in production when the
+  bundle is served same-origin behind nginx with the API proxied at `/api/`).
 - Drop the real `mockAnalysis.ts` from a backend sample so the UI looks real in the demo even offline.
 - Verify the 3 sync points (index ↔ document ↔ detail) all select the same clause.
 
