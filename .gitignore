@@ -1,0 +1,42 @@
+# --- Secrets / OCI (NEVER commit) ---
+.env
+.env.*
+!.env.example
+**/.oci/
+oci_api_key*.pem
+*.pem
+wallet/
+**/wallet/
+Wallet_*.zip
+*.wallet
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Node / Vite (frontend) ---
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# --- Vector store / data artifacts ---
+*.faiss
+chroma/
+.chroma/
+*.sqlite3
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
