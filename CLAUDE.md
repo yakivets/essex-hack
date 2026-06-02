@@ -90,5 +90,5 @@ Implementation underway. **See [`docs/STATUS.md`](docs/STATUS.md) for the live r
 built, what's left, how to run). In short: `frontend/` (Lovable TanStack Start app) + `backend/`
 (FastAPI) run end-to-end on mock/canned data; the real OCI GenAI pipeline is written behind `FAKE_OCI`
 but not yet verified (needs OCI creds in `backend/.env`). Note: the real API contract is the
-frontend's `src/lib/types.ts` (backend `schemas.py` matches it) — `docs/03-api-contract.md` is stale
-and needs reconciling.
+frontend's `src/lib/types.ts` (backend `schemas.py` matches it); `docs/03-api-contract.md` is now
+reconciled to that shape.

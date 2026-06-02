@@ -10,5 +10,6 @@ oci
 pdfplumber
 python-docx
 
-# Oracle 23ai vector search (next slice — benchmark + RAG chat). Not used yet.
-# oracledb
+# Oracle 23ai vector search (benchmark + RAG chat). Optional: only needed when
+# ADB_DSN is set; without it the in-memory cosine fallback is used.
+oracledb

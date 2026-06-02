@@ -19,8 +19,24 @@ class Settings(BaseSettings):
     oci_genai_endpoint: str = ""
     oci_compartment_id: str = ""
     oci_genai_chat_model: str = ""
+    # Embedding model id (e.g. cohere.embed-english-v3.0 / cohere.embed-multilingual-v3.0).
+    oci_genai_embed_model: str = ""
     # Max clauses we ask the model to extract (latency / token guard).
     max_clauses: int = 14
+
+    # Oracle Autonomous DB 23ai (vector store). Leave ADB_DSN empty to use the
+    # in-memory cosine fallback — the app runs offline either way.
+    adb_user: str = ""
+    adb_password: str = ""
+    adb_dsn: str = ""          # e.g. pactpilot_high (from tnsnames.ora in the wallet)
+    tns_admin: str = ""        # path to the unzipped wallet (sets TNS_ADMIN)
+    # Vector dimension. Fake embeddings + Cohere v3 models are 1024-dim.
+    embed_dim: int = 1024
+
+    @property
+    def use_oracle(self) -> bool:
+        """True when an Oracle ADB DSN is configured; else use in-memory store."""
+        return bool(self.adb_dsn.strip())
 
 
 settings = Settings()

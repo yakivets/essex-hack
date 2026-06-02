@@ -1,7 +1,9 @@
-"""Grounded Q&A over an analysed contract (GenAI-only slice).
+"""Grounded Q&A over an analysed contract (vector-RAG slice).
 
-We pass the clauses (id + quote) as context and ask the model to answer and cite
-clause ids. The next slice swaps this for vector retrieval over doc_clauses (23ai).
+We embed the question, retrieve the most relevant clauses from the doc_clauses
+vector collection (Oracle 23ai, or the in-memory fallback), and ask the model to
+answer citing clause ids. If retrieval is empty (e.g. the doc wasn't indexed) we
+fall back to passing all clauses as context.
 """
 
 from __future__ import annotations
@@ -12,6 +14,27 @@ from pydantic import BaseModel
 
 from app.models.schemas import ChatCitation, ChatResponse
 from app.oci import genai
+from app.pipeline import embeddings
+from app.pipeline.vectorstore import DOC, get_store
+
+# How many clauses to retrieve as grounding context.
+_TOP_K = 5
+
+
+def _retrieve_clause_ids(analysis_id: str, question: str) -> list[str]:
+    """Vector-search the doc collection; return ranked clause ids (no prefix)."""
+    try:
+        vec = embeddings.embed_one(question)
+        matches = get_store().similar(DOC, vec, k=_TOP_K, analysis_id=analysis_id)
+    except Exception:
+        return []
+    ids: list[str] = []
+    for m in matches:
+        raw = str(m.get("id", ""))
+        cid = raw.split(":", 1)[1] if ":" in raw else raw
+        if cid:
+            ids.append(cid)
+    return ids
 
 
 class _ChatLLM(BaseModel):
@@ -35,7 +58,13 @@ def answer_question(result: dict[str, Any], message: str, clause_id: str | None)
     clauses = result["clauses"]
     by_id = {c["id"]: c for c in clauses}
 
-    listing = "\n".join(f"{c['id']}: {c['quote']}" for c in clauses)
+    # Retrieve the most relevant clauses; always include the focused clause.
+    retrieved = _retrieve_clause_ids(result["id"], message)
+    if clause_id and clause_id in by_id:
+        retrieved = [clause_id] + [cid for cid in retrieved if cid != clause_id]
+    context = [by_id[cid] for cid in retrieved if cid in by_id] or clauses
+
+    listing = "\n".join(f"{c['id']}: {c['quote']}" for c in context)
     focus = ""
     if clause_id and clause_id in by_id:
         focus = f"The user is asking specifically about clause {clause_id}. "
