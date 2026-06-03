@@ -6,6 +6,8 @@ whose shape **exactly** matches the frontend's `src/lib/types.ts`, and answers g
 - **No LangChain / no LangGraph.** A small `asyncio` orchestrator calls OCI directly.
 - **AI:** OCI Generative AI via the raw `oci` SDK — chat (`cohere.command-r-08-2024`) + embeddings
   (`cohere.embed-english-v3.0`).
+- **Scanned PDFs:** OCI Document AI (`TEXT_EXTRACTION`) when pdfplumber text quality is poor.
+  Multi-page files are **split into ≤5-page PDF chunks** per API call (OCI inline limit).
 - **Vector search:** Oracle 23ai native `VECTOR` (via `oracledb`) **or** an in-memory cosine fallback.
 - **`FAKE_OCI=1`** stubs all cloud calls so the whole thing runs offline with no credentials.
 
@@ -21,7 +23,7 @@ python -m uvicorn app.main:app --reload --port 8000
 ```
 
 - Interactive API: http://localhost:8000/docs
-- Health: http://localhost:8000/health → `{"status":"ok","fake_oci":true}`
+- Health: http://localhost:8000/health → `{"status":"ok","fake_oci":true,"ocr_enabled":false}`
 
 > Tip: run with `--reload` during development so code changes hot-reload. Without it you must
 > restart uvicorn to pick up changes.
@@ -45,6 +47,10 @@ OCI_GENAI_ENDPOINT=https://inference.generativeai.uk-london-1.oci.oraclecloud.co
 OCI_COMPARTMENT_ID=ocid1.compartment...      # or the tenancy/root OCID
 OCI_GENAI_CHAT_MODEL=cohere.command-r-08-2024
 OCI_GENAI_EMBED_MODEL=cohere.embed-english-v3.0
+OCI_DOCUMENT_AI_ENDPOINT=https://document.aiservice.uk-london-1.oci.oraclecloud.com
+OCR_ENABLED=true
+OCR_MAX_PAGES=20
+OCR_MAX_PAGES_PER_REQUEST=5
 # Oracle 23ai vector store (optional) — leave ADB_DSN empty to use the in-memory fallback:
 ADB_USER=ADMIN
 ADB_PASSWORD=...
@@ -53,7 +59,7 @@ TNS_ADMIN=/path/to/unzipped/wallet
 ```
 
 Other knobs (in `app/config.py`): `OCI_READ_TIMEOUT` (default 240s), `MAX_CLAUSES` (default 8),
-`CACHE_TTL_SECONDS`, `EMBED_DIM` (1024).
+`OCR_*` thresholds, `CACHE_TTL_SECONDS`, `EMBED_DIM` (1024).
 
 ## Endpoints
 
@@ -63,7 +69,7 @@ Other knobs (in `app/config.py`): `OCI_READ_TIMEOUT` (default 240s), `MAX_CLAUSE
 | `POST` | `/api/analyze` | multipart: `file` **or** `text` **or** `sample_id` | `AnalysisResult` |
 | `GET` | `/api/analysis/{id}` | — | cached `AnalysisResult` (404 after TTL) |
 | `POST` | `/api/chat` | JSON `{analysis_id, message, clause_id?}` | `{answer, citations[]}` |
-| `GET` | `/health` | — | `{status, fake_oci}` |
+| `GET` | `/health` | — | `{status, fake_oci, ocr_enabled}` |
 
 ## Layout
 
@@ -75,8 +81,10 @@ app/
   models/schemas.py      Pydantic models — MIRROR frontend types.ts EXACTLY
   services/cache.py      in-memory TTL result cache (enables chat / refresh by id)
   oci/genai.py           OCI GenAI client + chat() + llm_json(prompt, schema)
+  oci/document_ai.py     OCI Document AI OCR for scanned PDFs
   pipeline/
-    ingest.py            PDF/DOCX/text -> plain text
+    ingest.py            PDF/DOCX/text -> plain text (pdfplumber + OCR fallback)
+    text_quality.py      heuristics to detect garbage pdfplumber output
     orchestrator.py      run_analysis(text) -> AnalysisResult (the single-call analysis)
     embeddings.py        embed(texts) -> vectors (OCI embed_text / deterministic fake)
     vectorstore.py       Oracle 23ai VECTOR  OR  in-memory cosine (picked by ADB_DSN)
@@ -90,6 +98,7 @@ app/
 scripts/
   ingest_cuad.py         one-off: embed + load the cuad_clauses collection (for Oracle)
   smoke_oci.py           dev smoke test: chat -> embed -> full analysis
+  smoke_document_ai.py   OCR heuristics + optional live Document AI on a PDF path
 requirements.txt · .env.example · .gitignore
 ```
 

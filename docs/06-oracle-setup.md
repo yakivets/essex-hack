@@ -74,6 +74,9 @@ FAKE_OCI=0          # set 1 to run the pipeline with stubs, no OCI needed
 ```
 
 ## Deployment (Hour 24–36)
+
+> **Step-by-step deploy + team handoff:** [`13-oci-deploy-and-handoff.md`](13-oci-deploy-and-handoff.md)  
+> (nginx template: [`deploy/nginx-pactpilot.conf`](deploy/nginx-pactpilot.conf))
 **Backend → OCI Compute (Always Free Ampere):**
 1. Create an Ampere A1 VM (Ubuntu), open port 8000 (or 80 via a reverse proxy) in the security list.
 2. Install Docker; copy repo + wallet; `docker build` from `backend/Dockerfile`; `docker run` with

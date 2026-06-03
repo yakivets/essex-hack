@@ -208,22 +208,75 @@ Open: http://localhost:8080
 
 ---
 
-## 5. Analyse your own contract
+## 5. OCI Document AI (scanned PDF OCR)
+
+**Problem:** `pdfplumber` only reads embedded text. Photo/scanned leases return garbage in the document pane.
+
+**Fix:** When text quality is poor, the backend calls **OCI Document AI** (`TEXT_EXTRACTION`).
+
+### 5.1 Console + IAM (~15 min)
+
+1. **Analytics & AI → AI Document** (Document Understanding) — confirm **UK South (London)**.
+2. You do **not** need **Generative AI → Vector stores** (empty is fine).
+3. IAM: your user (or group) needs permission to run **analyze document** in your compartment, e.g.:
+   - Broad (hackathon): `allow group <your-group> to manage ai-service in compartment <compartment>`
+   - Or narrower per [OCI AI Document policies](https://docs.oracle.com/en-us/iaas/Content/document-understanding/using/policy.htm)
+
+### 5.2 `backend/.env` (add to GenAI keys)
+
+```env
+OCI_DOCUMENT_AI_ENDPOINT=https://document.aiservice.uk-london-1.oci.oraclecloud.com
+OCR_ENABLED=true
+OCR_MAX_PAGES=20
+OCR_MAX_PAGES_PER_REQUEST=5
+OCR_MIN_CHARS_PER_PAGE=50
+OCR_JUNK_RATIO_THRESHOLD=0.25
+```
+
+Restart uvicorn after changes.
+
+### 5.3 Smoke tests
+
+```cmd
+python -m scripts.smoke_oci
+python -m scripts.smoke_document_ai
+python -m scripts.smoke_document_ai C:\path\to\your\tenancy-lease.pdf
+```
+
+`/health` should include `"ocr_enabled": true` when `FAKE_OCI=0`.
+
+### 5.4 Verify scanned lease in UI
+
+1. Confirm `/health` → `fake_oci: false`, `ocr_enabled: true`.
+2. Upload the **scanned tenancy PDF**.
+3. Document pane should show readable English (e.g. "End of Tenancy Matters", clause numbers).
+4. Analysis may take **longer** than born-digital PDFs (OCR + GenAI).
+
+**Limits:**
+
+- `OCR_MAX_PAGES_PER_REQUEST` (default **5**) — OCI **inline** sync allows at most **5 pages per
+  uploaded file** ([limits](https://docs.oracle.com/en-us/iaas/Content/document-understanding/using/limits.htm)).
+  `page_range` on a 24-page file still returns **413**; the backend **physically splits** the PDF
+  with `pypdf` into ≤5-page chunks (e.g. 24 pages capped at 20 → **4 API calls**, ~1–3 minutes).
+- `OCR_MAX_PAGES` (default **20**) — only the first N pages are OCR’d on long leases.
+- `MAX_CLAUSES` (default **8**) — LLM returns at most 8 structured clauses.
+- Margin handwriting may not appear in OCR (acceptable for demo).
+
+If `smoke_document_ai` shows `needs_ocr=False` but the UI still looks garbled, pdfplumber is
+extracting a broken text layer — set `OCR_FORCE=true` in `backend/.env` and restart uvicorn.
+
+---
+
+## 6. Analyse your own contract (born-digital or scanned)
 
 1. Confirm `/health` shows `fake_oci: false`.
 2. Open http://localhost:8080.
 3. Upload **PDF or DOCX** (or paste text / pick a built-in sample).
-4. Wait **~45–60s** for real analysis (not instant like `FAKE_OCI=1`).
-
-**Limits to know:**
-
-- `MAX_CLAUSES` defaults to **8** — the LLM returns at most 8 structured clauses (long leases are
-  not clause-by-clause exhaustive).
-- No hard upload size cap in code; very large PDFs may hit token or timeout limits.
+4. Wait **~45–90s** for real analysis (OCR adds time on scanned PDFs).
 
 ---
 
-## 6. Three local modes (quick reference)
+## 7. Three local modes (quick reference)
 
 | Mode | `backend/.env` | `frontend/.env` | Analysis |
 |------|----------------|-------------------|----------|
@@ -233,7 +286,7 @@ Open: http://localhost:8080
 
 ---
 
-## 7. Stopping servers (Windows)
+## 8. Stopping servers (Windows)
 
 If a dev server won’t exit in Cursor:
 
@@ -246,7 +299,7 @@ Same for port **8000** if uvicorn is stuck.
 
 ---
 
-## 8. What’s still needed for the hackathon demo
+## 9. What’s still needed for the hackathon demo
 
 Local real OCI on your laptop satisfies **“OCI AI works”** for development. Judges still expect:
 
@@ -257,20 +310,21 @@ Local real OCI on your laptop satisfies **“OCI AI works”** for development. 
 | **Deployed public URL** | ❌ | ✅ required |
 | Team shared compartment | Optional (your tenancy OK for solo) | Often team VM |
 
-Next steps for production path: [`06-oracle-setup.md`](06-oracle-setup.md) (ADB wallet,
-`scripts/ingest_cuad.py`, Compute + nginx).
+Next steps: [`13-oci-deploy-and-handoff.md`](13-oci-deploy-and-handoff.md) (VM + nginx + team handoff),
+[`06-oracle-setup.md`](06-oracle-setup.md) (ADB wallet optional).
 
 ---
 
-## 9. Checklist (copy for PR / standup)
+## 10. Checklist (copy for PR / standup)
 
 - [ ] `backend/.env`: `FAKE_OCI=0`, region, endpoint, compartment OCID, both model ids
 - [ ] `~/.oci/config` + API key uploaded
 - [ ] `oci os ns get` succeeds
 - [ ] `python -m scripts.smoke_oci` → ALL OK
+- [ ] `OCI_DOCUMENT_AI_ENDPOINT` set; `python -m scripts.smoke_document_ai <lease.pdf>` → ALL OK
 - [ ] `frontend/.env`: `VITE_API_BASE_URL=http://localhost:8000`
-- [ ] `/health` → `fake_oci: false`
-- [ ] Uploaded real PDF/DOCX and got live verdict
+- [ ] `/health` → `fake_oci: false`, `ocr_enabled: true`
+- [ ] Scanned lease PDF → readable document pane + live verdict
 
 ---
 
@@ -283,3 +337,4 @@ Next steps for production path: [`06-oracle-setup.md`](06-oracle-setup.md) (ADB 
 | [`backend/README.md`](../backend/README.md) | API endpoints, env keys |
 | [`frontend/README.md`](../frontend/README.md) | UI mock vs API |
 | [`STATUS.md`](STATUS.md) | Team progress snapshot |
+| [`13-oci-deploy-and-handoff.md`](13-oci-deploy-and-handoff.md) | Deploy VM + team handoff |

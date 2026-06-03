@@ -229,6 +229,7 @@ flowchart TB
 | **Where API runs** | `localhost:8000` | Same VM, proxied `/api/` |
 | **FAKE_OCI=1** | Canned demo | **Off** in production |
 | **GenAI** | Optional API calls from laptop | **Required** from VM |
+| **Document AI OCR** | Optional (scanned PDFs) | **Recommended** on VM |
 | **Vector DB** | In-memory CUAD (default) | **ADB 23ai** (judge requirement) |
 | **CUAD corpus** | `cuad_clauses.jsonl` in repo | Ingested into ADB (`ingest_cuad.py`) |
 | **Uploads** | Multipart to API | Same + optional Object Storage |

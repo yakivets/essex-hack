@@ -28,6 +28,18 @@ class Settings(BaseSettings):
     # clauses = less JSON = faster, more reliable generation.
     max_clauses: int = 8
 
+    # OCI Document AI OCR for scanned PDFs (only when fake_oci=False).
+    oci_document_ai_endpoint: str = ""
+    ocr_enabled: bool = True
+    # When true, always run Document AI on PDFs (skip quality heuristic). Dev/demo only.
+    ocr_force: bool = False
+    # Max pages to OCR across the whole document (cost/latency cap).
+    ocr_max_pages: int = 20
+    # OCI analyze_document hard limit per request (413 if exceeded).
+    ocr_max_pages_per_request: int = 5
+    ocr_min_chars_per_page: int = 50
+    ocr_junk_ratio_threshold: float = 0.25
+
     # Oracle Autonomous DB 23ai (vector store). Leave ADB_DSN empty to use the
     # in-memory cosine fallback — the app runs offline either way.
     adb_user: str = ""
@@ -41,6 +53,11 @@ class Settings(BaseSettings):
     def use_oracle(self) -> bool:
         """True when an Oracle ADB DSN is configured; else use in-memory store."""
         return bool(self.adb_dsn.strip())
+
+    @property
+    def ocr_active(self) -> bool:
+        """Document AI OCR available in real mode."""
+        return not self.fake_oci and self.ocr_enabled
 
 
 settings = Settings()

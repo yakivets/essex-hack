@@ -23,4 +23,8 @@ app.include_router(router)
 
 @app.get("/health")
 async def health() -> dict[str, str | bool]:
-    return {"status": "ok", "fake_oci": settings.fake_oci}
+    return {
+        "status": "ok",
+        "fake_oci": settings.fake_oci,
+        "ocr_enabled": settings.ocr_active,
+    }

@@ -8,6 +8,7 @@ python-multipart
 # Real GenAI pipeline (needed when FAKE_OCI=0).
 oci
 pdfplumber
+pypdf
 python-docx
 
 # Oracle 23ai vector search (benchmark + RAG chat). Optional: only needed when
