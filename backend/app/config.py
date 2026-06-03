@@ -34,6 +34,8 @@ class Settings(BaseSettings):
     adb_password: str = ""
     adb_dsn: str = ""          # e.g. pactpilot_high (from tnsnames.ora in the wallet)
     tns_admin: str = ""        # path to the unzipped wallet (sets TNS_ADMIN)
+    # Password set when downloading the wallet zip (only if ewallet.p12 needs it).
+    wallet_password: str = ""
     # Vector dimension. Fake embeddings + Cohere v3 models are 1024-dim.
     embed_dim: int = 1024
 

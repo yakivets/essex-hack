@@ -17,9 +17,29 @@ from app.config import settings
 
 _is_sqlite = settings.database_url.startswith("sqlite")
 
+if not _is_sqlite and settings.tns_admin:
+    import os
+
+    os.environ.setdefault("TNS_ADMIN", settings.tns_admin)
+
+
+def _connect_args() -> dict:
+    if _is_sqlite:
+        return {"check_same_thread": False}
+    if settings.tns_admin:
+        args: dict = {
+            "config_dir": settings.tns_admin,
+            "wallet_location": settings.tns_admin,
+        }
+        if settings.wallet_password:
+            args["wallet_password"] = settings.wallet_password
+        return args
+    return {}
+
+
 engine = create_engine(
     settings.database_url,
-    connect_args={"check_same_thread": False} if _is_sqlite else {},
+    connect_args=_connect_args(),
     pool_pre_ping=True,
     future=True,
 )
