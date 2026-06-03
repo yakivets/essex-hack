@@ -11,9 +11,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "PactPilot — AI contract review in 30 seconds" },
-      { name: "description", content: "Drop a contract. PactPilot flags risk, explains clauses in plain English, and benchmarks terms against the market — no account needed." },
+      {
+        name: "description",
+        content:
+          "Drop a contract. PactPilot flags risk, explains clauses in plain English, and benchmarks terms against the market — no account needed.",
+      },
       { property: "og:title", content: "PactPilot — AI contract review in 30 seconds" },
-      { property: "og:description", content: "A lawyer's first look at your contract — in 30 seconds." },
+      {
+        property: "og:description",
+        content: "A lawyer's first look at your contract — in 30 seconds.",
+      },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

@@ -17,7 +17,9 @@ function Wordmark() {
           style={{ animation: "draw-stroke 900ms ease-out forwards" }}
         />
       </svg>
-      <span className="font-display text-lg font-semibold tracking-tight text-foreground">PactPilot</span>
+      <span className="font-display text-lg font-semibold tracking-tight text-foreground">
+        PactPilot
+      </span>
     </div>
   );
 }

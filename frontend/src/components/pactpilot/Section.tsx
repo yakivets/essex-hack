@@ -11,7 +11,15 @@ interface Props {
   children: ReactNode;
 }
 
-export function Section({ id, icon, iconTint = "var(--accent)", title, badge, defaultOpen, children }: Props) {
+export function Section({
+  id,
+  icon,
+  iconTint = "var(--accent)",
+  title,
+  badge,
+  defaultOpen,
+  children,
+}: Props) {
   const [open, setOpen] = useState(!!defaultOpen);
   const [height, setHeight] = useState<number | undefined>(defaultOpen ? undefined : 0);
   const [contentEl, setContentEl] = useState<HTMLDivElement | null>(null);

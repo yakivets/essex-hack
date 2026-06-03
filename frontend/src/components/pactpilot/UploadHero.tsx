@@ -15,7 +15,9 @@ export function UploadHero({ onSubmit }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    getSamples().then(setSamples).catch(() => setSamples([]));
+    getSamples()
+      .then(setSamples)
+      .catch(() => setSamples([]));
   }, []);
 
   function handleFile(f: File | null | undefined) {
@@ -26,21 +28,25 @@ export function UploadHero({ onSubmit }: Props) {
   return (
     <div className="max-w-5xl mx-auto px-6 pt-16 pb-24 rise-in">
       <div className="text-center max-w-3xl mx-auto">
-        <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">AI Contract Review</p>
+        <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
+          AI Contract Review
+        </p>
         <h1 className="mt-3 text-5xl sm:text-6xl font-bold tracking-tight text-foreground">
           Know what you're signing.
         </h1>
-        <p className="mt-4 text-lg text-muted-foreground">
-          A lawyer's first look — in 30 seconds.
-        </p>
+        <p className="mt-4 text-lg text-muted-foreground">A lawyer's first look — in 30 seconds.</p>
       </div>
 
       <div className="mt-12">
         <label
-          onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDrag(true);
+          }}
           onDragLeave={() => setDrag(false)}
           onDrop={(e) => {
-            e.preventDefault(); setDrag(false);
+            e.preventDefault();
+            setDrag(false);
             handleFile(e.dataTransfer.files?.[0]);
           }}
           className="block cursor-pointer rounded-2xl bg-card transition-all duration-200"
@@ -65,14 +71,20 @@ export function UploadHero({ onSubmit }: Props) {
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
               <button
                 type="button"
-                onClick={(e) => { e.preventDefault(); fileRef.current?.click(); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  fileRef.current?.click();
+                }}
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary-hover transition-colors px-4 py-2.5 rounded-lg text-sm font-medium shadow-card"
               >
                 <Upload size={16} /> Browse files
               </button>
               <button
                 type="button"
-                onClick={(e) => { e.preventDefault(); setShowText((s) => !s); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowText((s) => !s);
+                }}
                 className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg border border-border bg-card hover:bg-muted transition-colors"
               >
                 <FileText size={16} /> Paste text instead
@@ -115,8 +127,12 @@ export function UploadHero({ onSubmit }: Props) {
               onClick={() => onSubmit({ kind: "sample", sampleId: s.id })}
               className="group text-left rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-card transition-all px-4 py-3 max-w-xs"
             >
-              <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{s.name}</div>
-              <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{s.description}</div>
+              <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                {s.name}
+              </div>
+              <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                {s.description}
+              </div>
             </button>
           ))}
         </div>

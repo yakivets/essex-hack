@@ -40,10 +40,22 @@ function Gauge({ score, level }: { score: number; level: "high" | "medium" | "lo
       <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
         <title>Risk score {score} of 100</title>
         <circle cx="60" cy="60" r={R} fill="none" stroke="var(--border)" strokeWidth="9" />
-        <circle cx="60" cy="60" r={R} fill="none" stroke={riskColor(level)} strokeWidth="9" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - v / 100)} />
+        <circle
+          cx="60"
+          cy="60"
+          r={R}
+          fill="none"
+          stroke={riskColor(level)}
+          strokeWidth="9"
+          strokeLinecap="round"
+          strokeDasharray={C}
+          strokeDashoffset={C * (1 - v / 100)}
+        />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="font-display text-3xl font-semibold tabular tracking-tight">{Math.round(v)}</div>
+        <div className="font-display text-3xl font-semibold tabular tracking-tight">
+          {Math.round(v)}
+        </div>
         <div className="text-[10px] text-tertiary -mt-0.5">of 100</div>
       </div>
     </div>
@@ -63,7 +75,11 @@ function Fairness({ score, label }: { score: number; label: string }) {
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border" />
         <div
           className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-primary border-2 border-card shadow-card transition-all"
-          style={{ left: `calc(${pct}% - 7px)`, transitionDuration: "900ms", transitionTimingFunction: "cubic-bezier(0.2,0.8,0.2,1)" }}
+          style={{
+            left: `calc(${pct}% - 7px)`,
+            transitionDuration: "900ms",
+            transitionTimingFunction: "cubic-bezier(0.2,0.8,0.2,1)",
+          }}
         />
       </div>
       <div className="mt-1.5 flex justify-between text-[11px] text-tertiary">
@@ -80,7 +96,12 @@ function Fact({ label, value }: { label: string; value?: string }) {
   return (
     <div className="rounded-lg border border-border bg-card px-2.5 py-1.5">
       <div className="text-[10px] uppercase tracking-wider text-tertiary">{label}</div>
-      <div className="text-xs font-medium text-foreground mt-0.5 leading-snug break-words line-clamp-2" title={value}>{value}</div>
+      <div
+        className="text-xs font-medium text-foreground mt-0.5 leading-snug break-words line-clamp-2"
+        title={value}
+      >
+        {value}
+      </div>
     </div>
   );
 }
@@ -89,10 +110,15 @@ function ClauseDetail({ clause, onAsk }: { clause: Clause; onAsk: () => void }) 
   return (
     <div className="rounded-xl border border-border bg-card p-4 rise-in">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-medium text-tertiary uppercase tracking-wider">{clause.category}</span>
+        <span className="text-[11px] font-medium text-tertiary uppercase tracking-wider">
+          {clause.category}
+        </span>
         <RiskBadge level={clause.risk_level} />
       </div>
-      <blockquote className="mt-2.5 text-sm text-foreground/80 border-l-2 pl-3 italic" style={{ borderColor: riskColor(clause.risk_level) }}>
+      <blockquote
+        className="mt-2.5 text-sm text-foreground/80 border-l-2 pl-3 italic"
+        style={{ borderColor: riskColor(clause.risk_level) }}
+      >
         "{clause.quote}"
       </blockquote>
       <div className="mt-3 text-sm">
@@ -107,12 +133,18 @@ function ClauseDetail({ clause, onAsk }: { clause: Clause; onAsk: () => void }) 
       )}
       {clause.benchmark && (
         <div className="mt-3 text-xs text-muted-foreground">
-          Harsher than <span className="font-semibold text-foreground tabular">{clause.benchmark.percentile}%</span> — typical is {clause.benchmark.typical}.
+          Harsher than{" "}
+          <span className="font-semibold text-foreground tabular">
+            {clause.benchmark.percentile}%
+          </span>{" "}
+          — typical is {clause.benchmark.typical}.
         </div>
       )}
       {clause.suggested_fix && (
         <div className="mt-3 p-3 rounded-lg bg-accent text-sm">
-          <div className="text-[11px] uppercase tracking-wider text-accent-foreground font-semibold">Suggested fix</div>
+          <div className="text-[11px] uppercase tracking-wider text-accent-foreground font-semibold">
+            Suggested fix
+          </div>
           <p className="mt-1 text-foreground">{clause.suggested_fix}</p>
         </div>
       )}
@@ -128,11 +160,14 @@ function ClauseDetail({ clause, onAsk }: { clause: Clause; onAsk: () => void }) 
 }
 
 export function RiskRail(props: Props) {
-  const { data, selectedClauseId, selectedFlagIndex, onSelectClause, onSelectFlag, onAskAbout } = props;
+  const { data, selectedClauseId, selectedFlagIndex, onSelectClause, onSelectFlag, onAskAbout } =
+    props;
   const [tab, setTab] = useState<Tab>("risk");
   const v = data.verdict;
   const flags = data.red_flags;
-  const selected = selectedClauseId ? data.clauses.find((c) => c.id === selectedClauseId) ?? null : null;
+  const selected = selectedClauseId
+    ? (data.clauses.find((c) => c.id === selectedClauseId) ?? null)
+    : null;
 
   function ask(id: string) {
     onAskAbout(id);
@@ -147,7 +182,13 @@ export function RiskRail(props: Props) {
           <Gauge score={v.risk_score} level={v.risk_level} />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ color: riskColor(v.risk_level), background: `${riskColor(v.risk_level)}1A` }}>
+              <span
+                className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                style={{
+                  color: riskColor(v.risk_level),
+                  background: `${riskColor(v.risk_level)}1A`,
+                }}
+              >
                 {riskLabel(v.risk_level)} risk
               </span>
               <button
@@ -158,7 +199,9 @@ export function RiskRail(props: Props) {
                 <Download size={13} /> Export
               </button>
             </div>
-            <h2 className="font-display mt-2 text-lg font-semibold leading-snug tracking-tight text-foreground">{v.summary_line}</h2>
+            <h2 className="font-display mt-2 text-lg font-semibold leading-snug tracking-tight text-foreground">
+              {v.summary_line}
+            </h2>
           </div>
         </div>
         <div className="mt-3">
@@ -174,23 +217,26 @@ export function RiskRail(props: Props) {
 
       {/* Tabs */}
       <div className="shrink-0 flex items-center gap-1 px-3 pt-3">
-        {([["risk", "Risk", <Flag size={14} key="f" />, flags.length], ["chat", "Chat", <MessageSquare size={14} key="c" />, null]] as const).map(
-          ([k, label, icon, count]) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => setTab(k as Tab)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-sm font-medium border-b-2 transition-colors"
-              style={{
-                borderColor: tab === k ? "var(--primary)" : "transparent",
-                color: tab === k ? "var(--foreground)" : "var(--muted-foreground)",
-              }}
-            >
-              {icon} {label}
-              {count != null && <span className="text-xs tabular text-tertiary">{count}</span>}
-            </button>
-          )
-        )}
+        {(
+          [
+            ["risk", "Risk", <Flag size={14} key="f" />, flags.length],
+            ["chat", "Chat", <MessageSquare size={14} key="c" />, null],
+          ] as const
+        ).map(([k, label, icon, count]) => (
+          <button
+            key={k}
+            type="button"
+            onClick={() => setTab(k as Tab)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-sm font-medium border-b-2 transition-colors"
+            style={{
+              borderColor: tab === k ? "var(--primary)" : "transparent",
+              color: tab === k ? "var(--foreground)" : "var(--muted-foreground)",
+            }}
+          >
+            {icon} {label}
+            {count != null && <span className="text-xs tabular text-tertiary">{count}</span>}
+          </button>
+        ))}
       </div>
       <div className="h-px bg-border shrink-0" />
 
@@ -215,7 +261,10 @@ export function RiskRail(props: Props) {
                       className="w-full text-left rounded-xl border bg-card hover:shadow-card transition-all relative overflow-hidden p-3.5 pl-4"
                       style={{ borderColor: active ? "var(--primary)" : "var(--border)" }}
                     >
-                      <span className="absolute left-0 top-0 bottom-0 w-1" style={{ background: riskColor(f.severity) }} />
+                      <span
+                        className="absolute left-0 top-0 bottom-0 w-1"
+                        style={{ background: riskColor(f.severity) }}
+                      />
                       <div className="flex items-start justify-between gap-2">
                         <div className="font-medium text-sm text-foreground">{f.title}</div>
                         <RiskBadge level={f.severity} />
@@ -226,7 +275,9 @@ export function RiskRail(props: Props) {
                 })}
               </>
             ) : (
-              <div className="text-sm text-muted-foreground text-center py-8">No red flags — this one looks clean.</div>
+              <div className="text-sm text-muted-foreground text-center py-8">
+                No red flags — this one looks clean.
+              </div>
             )}
           </div>
         ) : (

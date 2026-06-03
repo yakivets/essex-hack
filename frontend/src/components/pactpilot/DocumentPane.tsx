@@ -18,7 +18,10 @@ export function DocumentPane({ data, selectedClauseId, onSelectClause, scrollTok
   const docRef = useRef<HTMLDivElement>(null);
 
   const clauseMap = useMemo(() => new Map(data.clauses.map((c) => [c.id, c])), [data.clauses]);
-  const flagClauseIds = useMemo(() => new Set(data.red_flags.map((f) => f.clause_id)), [data.red_flags]);
+  const flagClauseIds = useMemo(
+    () => new Set(data.red_flags.map((f) => f.clause_id)),
+    [data.red_flags],
+  );
 
   const isVisible = useMemo(() => {
     return (id: string) => {
@@ -72,7 +75,12 @@ export function DocumentPane({ data, selectedClauseId, onSelectClause, scrollTok
           <span className="text-xs text-tertiary tabular ml-1">{data.clauses.length} clauses</span>
         </div>
         <div className="inline-flex p-0.5 bg-muted rounded-lg text-xs ml-auto">
-          {([["flags", "Red flags"], ["all", "All clauses"]] as const).map(([k, l]) => (
+          {(
+            [
+              ["flags", "Red flags"],
+              ["all", "All clauses"],
+            ] as const
+          ).map(([k, l]) => (
             <button
               key={k}
               type="button"

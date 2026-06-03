@@ -23,7 +23,13 @@ const SUGGESTIONS = [
   "What's the worst-case here?",
 ];
 
-export function ChatPanel({ analysisId, prefillClauseId, clauseLabel, onClearPrefill, onCitationClick }: Props) {
+export function ChatPanel({
+  analysisId,
+  prefillClauseId,
+  clauseLabel,
+  onClearPrefill,
+  onCitationClick,
+}: Props) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -50,7 +56,10 @@ export function ChatPanel({ analysisId, prefillClauseId, clauseLabel, onClearPre
       const r = await chat(analysisId, msg, clauseId);
       setTurns((t) => [...t, { role: "assistant", text: r.answer, citations: r.citations }]);
     } catch {
-      setTurns((t) => [...t, { role: "assistant", text: "Sorry — that didn't go through. Please try again." }]);
+      setTurns((t) => [
+        ...t,
+        { role: "assistant", text: "Sorry — that didn't go through. Please try again." },
+      ]);
     } finally {
       setBusy(false);
       onClearPrefill();
@@ -59,14 +68,19 @@ export function ChatPanel({ analysisId, prefillClauseId, clauseLabel, onClearPre
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div ref={scrollRef} className="scroll-thin flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-3">
+      <div
+        ref={scrollRef}
+        className="scroll-thin flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-3"
+      >
         {turns.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center px-2">
             <span className="w-11 h-11 rounded-2xl bg-accent flex items-center justify-center">
               <Sparkles size={18} className="text-primary" />
             </span>
             <p className="mt-3 text-sm font-medium text-foreground">Ask about this contract</p>
-            <p className="mt-1 text-xs text-muted-foreground">Grounded in the document — answers cite clauses.</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Grounded in the document — answers cite clauses.
+            </p>
             <div className="mt-4 flex flex-col gap-1.5 w-full">
               {SUGGESTIONS.map((s) => (
                 <button
@@ -113,8 +127,14 @@ export function ChatPanel({ analysisId, prefillClauseId, clauseLabel, onClearPre
         {busy && (
           <div className="flex items-center gap-1.5 text-tertiary">
             <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse" />
-            <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse" style={{ animationDelay: "150ms" }} />
-            <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse" style={{ animationDelay: "300ms" }} />
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"
+              style={{ animationDelay: "150ms" }}
+            />
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"
+              style={{ animationDelay: "300ms" }}
+            />
           </div>
         )}
       </div>
@@ -123,7 +143,14 @@ export function ChatPanel({ analysisId, prefillClauseId, clauseLabel, onClearPre
         {prefillClauseId && (
           <div className="mb-2 inline-flex items-center gap-1.5 text-xs text-primary bg-accent px-2 py-1 rounded-full">
             About: {clauseLabel}
-            <button type="button" onClick={onClearPrefill} aria-label="Clear clause context" className="hover:opacity-70">×</button>
+            <button
+              type="button"
+              onClick={onClearPrefill}
+              aria-label="Clear clause context"
+              className="hover:opacity-70"
+            >
+              ×
+            </button>
           </div>
         )}
         <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-3 py-1.5 focus-within:border-primary/50 transition-colors">
@@ -131,7 +158,9 @@ export function ChatPanel({ analysisId, prefillClauseId, clauseLabel, onClearPre
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") send(); }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") send();
+            }}
             placeholder="Ask about this contract…"
             className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-tertiary py-1.5"
           />

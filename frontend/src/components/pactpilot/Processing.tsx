@@ -16,11 +16,25 @@ const TIPS = [
  *  risk lines light up as they're found, and clause tags float out. */
 function ReviewScene() {
   return (
-    <svg viewBox="0 0 360 220" className="w-full h-full float-soft" role="img" aria-label="Analysing the contract">
+    <svg
+      viewBox="0 0 360 220"
+      className="w-full h-full float-soft"
+      role="img"
+      aria-label="Analysing the contract"
+    >
       <title>Reviewing the contract</title>
 
       {/* page */}
-      <rect x="64" y="20" width="150" height="184" rx="10" fill="var(--card)" stroke="var(--border)" strokeWidth="1.5" />
+      <rect
+        x="64"
+        y="20"
+        width="150"
+        height="184"
+        rx="10"
+        fill="var(--card)"
+        stroke="var(--border)"
+        strokeWidth="1.5"
+      />
       <rect x="82" y="36" width="84" height="9" rx="3" fill="var(--foreground)" opacity="0.55" />
 
       {/* body lines (some are "risk" lines that pulse) */}
@@ -33,12 +47,24 @@ function ReviewScene() {
           <g key={i}>
             <rect x="82" y={y} width={w} height="8" rx="3" fill="var(--muted)">
               {risk && (
-                <animate attributeName="fill" values={`var(--muted);${color};var(--muted)`} dur="2.6s" begin={`${i * 0.5}s`} repeatCount="indefinite" />
+                <animate
+                  attributeName="fill"
+                  values={`var(--muted);${color};var(--muted)`}
+                  dur="2.6s"
+                  begin={`${i * 0.5}s`}
+                  repeatCount="indefinite"
+                />
               )}
             </rect>
             {risk && (
               <rect x="82" y={y} width={w} height="8" rx="3" fill={color} opacity="0">
-                <animate attributeName="opacity" values="0;0.18;0" dur="2.6s" begin={`${i * 0.5}s`} repeatCount="indefinite" />
+                <animate
+                  attributeName="opacity"
+                  values="0;0.18;0"
+                  dur="2.6s"
+                  begin={`${i * 0.5}s`}
+                  repeatCount="indefinite"
+                />
               </rect>
             )}
           </g>
@@ -47,10 +73,27 @@ function ReviewScene() {
 
       {/* magnifier sweeping down the page */}
       <g>
-        <animateTransform attributeName="transform" type="translate" values="0 0; 0 116; 0 0" dur="4.6s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1" repeatCount="indefinite" />
+        <animateTransform
+          attributeName="transform"
+          type="translate"
+          values="0 0; 0 116; 0 0"
+          dur="4.6s"
+          keyTimes="0;0.5;1"
+          calcMode="spline"
+          keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
+          repeatCount="indefinite"
+        />
         <circle cx="150" cy="58" r="24" fill="var(--primary)" opacity="0.06" />
         <circle cx="150" cy="58" r="24" fill="none" stroke="var(--primary)" strokeWidth="4" />
-        <line x1="167" y1="75" x2="182" y2="92" stroke="var(--primary)" strokeWidth="5" strokeLinecap="round" />
+        <line
+          x1="167"
+          y1="75"
+          x2="182"
+          y2="92"
+          stroke="var(--primary)"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
       </g>
 
       {/* clause tags floating out as they're "extracted" */}
@@ -60,11 +103,36 @@ function ReviewScene() {
         { label: "Payment", dot: "var(--risk-low)", begin: "3s" },
       ].map((t, i) => (
         <g key={i} opacity="0">
-          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="4.5s" begin={t.begin} repeatCount="indefinite" />
-          <animateTransform attributeName="transform" type="translate" values="248 150; 256 96" dur="4.5s" begin={t.begin} repeatCount="indefinite" />
-          <rect x="0" y="0" width="92" height="24" rx="12" fill="var(--card)" stroke="var(--border)" strokeWidth="1.5" />
+          <animate
+            attributeName="opacity"
+            values="0;1;1;0"
+            keyTimes="0;0.15;0.8;1"
+            dur="4.5s"
+            begin={t.begin}
+            repeatCount="indefinite"
+          />
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="248 150; 256 96"
+            dur="4.5s"
+            begin={t.begin}
+            repeatCount="indefinite"
+          />
+          <rect
+            x="0"
+            y="0"
+            width="92"
+            height="24"
+            rx="12"
+            fill="var(--card)"
+            stroke="var(--border)"
+            strokeWidth="1.5"
+          />
           <circle cx="14" cy="12" r="4" fill={t.dot} />
-          <text x="26" y="16" fontSize="11" fontWeight="500" fill="var(--muted-foreground)">{t.label}</text>
+          <text x="26" y="16" fontSize="11" fontWeight="500" fill="var(--muted-foreground)">
+            {t.label}
+          </text>
         </g>
       ))}
     </svg>
@@ -107,8 +175,13 @@ export function Processing() {
           </h2>
 
           {/* rotating informative tip */}
-          <div key={tip} className="fade-swap mt-2 min-h-[40px] text-center text-sm text-muted-foreground max-w-md mx-auto">
-            <span className="text-[11px] uppercase tracking-wider text-primary font-semibold">Did you know</span>
+          <div
+            key={tip}
+            className="fade-swap mt-2 min-h-[40px] text-center text-sm text-muted-foreground max-w-md mx-auto"
+          >
+            <span className="text-[11px] uppercase tracking-wider text-primary font-semibold">
+              Did you know
+            </span>
             <p className="mt-0.5">{TIPS[tip]}</p>
           </div>
 
@@ -127,7 +200,10 @@ export function Processing() {
                     color: isDone || isActive ? "var(--foreground)" : "var(--tertiary)",
                   }}
                 >
-                  <span className="w-4 h-4 rounded-full flex items-center justify-center" style={{ background: isDone ? "var(--primary)" : "transparent" }}>
+                  <span
+                    className="w-4 h-4 rounded-full flex items-center justify-center"
+                    style={{ background: isDone ? "var(--primary)" : "transparent" }}
+                  >
                     {isDone ? (
                       <Check size={11} className="text-primary-foreground" />
                     ) : isActive ? (
