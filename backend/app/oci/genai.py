@@ -27,6 +27,9 @@ def _client():
     return oci.generative_ai_inference.GenerativeAiInferenceClient(
         config=config,
         service_endpoint=settings.oci_genai_endpoint,
+        # (connect, read) timeouts. The SDK default read is 60s, too low for a
+        # large analysis — raise it so a slow generation completes instead of 502.
+        timeout=(10, settings.oci_read_timeout),
     )
 
 

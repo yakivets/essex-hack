@@ -28,7 +28,7 @@ _JSONL_PATH = Path(__file__).resolve().parent / "cuad_clauses.jsonl"
 # has ~6.3k clauses; embedding all of them on first request (esp. via real OCI)
 # would be slow, so we take a balanced subset. The full file stays in the repo
 # for a one-off Oracle ingest, which can pass per_category=None.
-_DEFAULT_PER_CATEGORY = 50
+_DEFAULT_PER_CATEGORY = 15
 
 # CUAD harshness labels -> a 0..100 score (aligned with benchmark._RISK_HARSHNESS).
 _HARSHNESS_SCORE = {"high": 85.0, "medium": 60.0, "low": 30.0}

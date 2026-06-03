@@ -6,6 +6,7 @@
 
 @theme inline {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -69,6 +70,34 @@
   --risk-low: #10B981;
 }
 
+.dark {
+  --background: #0A0A0C;
+  --foreground: #ECECEE;
+  --card: #141418;
+  --card-foreground: #ECECEE;
+  --popover: #16161B;
+  --popover-foreground: #ECECEE;
+  --primary: #3B82F6;
+  --primary-foreground: #FFFFFF;
+  --primary-hover: #2F6FE0;
+  --secondary: #1B1B21;
+  --secondary-foreground: #ECECEE;
+  --muted: #1B1B21;
+  --muted-foreground: #A1A1AA;
+  --tertiary: #71717A;
+  --accent: #16223C;
+  --accent-foreground: #93B4FF;
+  --destructive: #F43F5E;
+  --destructive-foreground: #FFFFFF;
+  --border: #26262C;
+  --input: #26262C;
+  --ring: #3B82F6;
+  --band: #141418;
+  --risk-high: #FB7185;
+  --risk-med: #FBBF24;
+  --risk-low: #34D399;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -112,12 +141,41 @@
 @keyframes draw-stroke {
   to { stroke-dashoffset: 0; }
 }
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.float-soft { animation: float-soft 4.5s ease-in-out infinite; }
+@keyframes fade-swap {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-swap { animation: fade-swap 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .rise-in { animation: rise-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .shimmer {
   background: linear-gradient(90deg, #F0F1F4 0%, #F8F9FB 50%, #F0F1F4 100%);
   background-size: 800px 100%;
   animation: shimmer 1.4s linear infinite;
 }
+.dark .shimmer {
+  background: linear-gradient(90deg, #16161C 0%, #22222B 50%, #16161C 100%);
+  background-size: 800px 100%;
+}
+
+/* Subtle theme transition on the shell, but not on inputs/transforms. */
+html { transition: background-color 200ms ease, color 200ms ease; }
+
+/* Thin, unobtrusive scrollbars for the internal scroll panes. */
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover { background: var(--tertiary); background-clip: padding-box; }
+.scroll-thin::-webkit-scrollbar-track { background: transparent; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

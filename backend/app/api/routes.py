@@ -7,6 +7,7 @@ The OCI pipeline is imported lazily so the canned path needs no `oci` SDK.
 
 from __future__ import annotations
 
+import traceback
 from pathlib import Path
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
@@ -79,7 +80,8 @@ async def analyze(
         # run_analysis is blocking (sync OCI HTTP); off-load it so it doesn't
         # stall the event loop and block other requests during the ~45s call.
         result = await run_in_threadpool(run_analysis, contract_text)
-    except Exception as exc:  # surface a clean error to the UI
+    except Exception as exc:  # surface a clean error to the UI; log the cause
+        traceback.print_exc()
         raise HTTPException(status_code=502, detail=f"Analysis failed: {exc}") from exc
 
     cache.put(result["id"], result)
@@ -109,6 +111,7 @@ async def chat(req: ChatRequest) -> ChatResponse:
                 answer_question, result, req.message, req.clause_id
             )
         except Exception as exc:
+            traceback.print_exc()
             raise HTTPException(status_code=502, detail=f"Chat failed: {exc}") from exc
 
     # Canned chat (Stage A)

@@ -73,7 +73,7 @@ export function UploadHero({ onSubmit }: Props) {
               <button
                 type="button"
                 onClick={(e) => { e.preventDefault(); setShowText((s) => !s); }}
-                className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg border border-border bg-white hover:bg-muted transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg border border-border bg-card hover:bg-muted transition-colors"
               >
                 <FileText size={16} /> Paste text instead
               </button>
@@ -123,10 +123,10 @@ export function UploadHero({ onSubmit }: Props) {
       </div>
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-white">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
           <span className="w-1.5 h-1.5 rounded-full bg-risk-low" /> Private · deleted after analysis
         </span>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-white">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
           <span className="w-1.5 h-1.5 rounded-full bg-primary" /> No account needed
         </span>
       </div>

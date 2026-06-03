@@ -26,7 +26,7 @@ export function Sections({ data }: { data: AnalysisResult }) {
           iconTint="rgba(16,185,129,0.12)"
           title="Money"
         >
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+          <div className="grid grid-cols-2 gap-3 pt-3">
             <Tile label="Total value" value={data.money.total_value} />
             <Tile label="Payment schedule" value={data.money.payment_schedule} />
             <Tile label="Liability cap" value={data.money.liability_cap} />
@@ -78,7 +78,7 @@ export function Sections({ data }: { data: AnalysisResult }) {
           <p className="text-sm text-muted-foreground pt-3 mb-3">Protections this contract lacks.</p>
           <div className="grid sm:grid-cols-2 gap-3">
             {data.missing_clauses.map((m, i) => (
-              <div key={i} className="rounded-xl border border-border bg-white p-4">
+              <div key={i} className="rounded-xl border border-border bg-card p-4">
                 <div className="text-sm font-medium">{m.name}</div>
                 <div className="text-sm text-muted-foreground mt-1">{m.why_matters}</div>
               </div>
@@ -110,7 +110,7 @@ export function Sections({ data }: { data: AnalysisResult }) {
 
 function ObCol({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-xl border border-border bg-white p-4">
+    <div className="rounded-xl border border-border bg-card p-4">
       <div className="text-xs uppercase tracking-wider text-tertiary font-semibold">{title}</div>
       <ul className="mt-2 space-y-1.5 text-sm">
         {items.map((it, i) => <li key={i} className="flex gap-2"><span className="text-tertiary">•</span>{it}</li>)}
@@ -122,9 +122,9 @@ function ObCol({ title, items }: { title: string; items: string[] }) {
 function Tile({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
   return (
-    <div className="rounded-xl border border-border bg-white px-3 py-2.5">
+    <div className="rounded-xl border border-border bg-card px-3 py-2.5">
       <div className="text-[11px] uppercase tracking-wider text-tertiary">{label}</div>
-      <div className="text-sm font-medium mt-0.5 tabular">{value}</div>
+      <div className="text-sm font-medium mt-0.5 break-words leading-snug">{value}</div>
     </div>
   );
 }
@@ -150,7 +150,7 @@ function Timeline({ data }: { data: AnalysisResult }) {
           const pct = (((+new Date(d.date)) - min) / span) * 100;
           return (
             <div key={i} className="absolute -top-1.5 -translate-x-1/2" style={{ left: `${pct}%` }}>
-              <div className="w-3.5 h-3.5 rounded-full bg-white border-2 border-foreground" />
+              <div className="w-3.5 h-3.5 rounded-full bg-card border-2 border-foreground" />
             </div>
           );
         })}

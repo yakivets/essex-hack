@@ -129,7 +129,7 @@ def _parse_analysis_json(prompt: str) -> dict[str, Any]:
     instruction = f"{prompt}\n\nRespond with ONLY valid JSON, no markdown fences, no commentary."
     last_err: Exception | None = None
     for _ in range(2):
-        raw = genai.chat(instruction, max_tokens=3000)
+        raw = genai.chat(instruction, max_tokens=4000)
         try:
             data = json.loads(genai._strip_fence(raw))
             if isinstance(data, dict):

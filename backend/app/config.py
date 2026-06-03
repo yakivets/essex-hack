@@ -21,8 +21,12 @@ class Settings(BaseSettings):
     oci_genai_chat_model: str = ""
     # Embedding model id (e.g. cohere.embed-english-v3.0 / cohere.embed-multilingual-v3.0).
     oci_genai_embed_model: str = ""
-    # Max clauses we ask the model to extract (latency / token guard).
-    max_clauses: int = 14
+    # Read timeout (seconds) for OCI inference calls. The SDK default is 60s,
+    # which a large structured analysis can exceed — give it real headroom.
+    oci_read_timeout: float = 240.0
+    # Max clauses we ask the model to extract (latency / token guard). Fewer
+    # clauses = less JSON = faster, more reliable generation.
+    max_clauses: int = 8
 
     # Oracle Autonomous DB 23ai (vector store). Leave ADB_DSN empty to use the
     # in-memory cosine fallback — the app runs offline either way.
