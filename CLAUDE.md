@@ -5,10 +5,12 @@ Guidance for coding agents (and humans) working in this repo. Read this first.
 ## What this is
 **PactPilot** — an AI contract-review web app for the IADS Agentic AI Hackathon (48h). A
 small-business founder drops in a contract and gets a 30-second risk **verdict**, an interactive
-risk-highlighted **document**, market **benchmarks**, and a grounded **Q&A chat**. No login,
-stateless.
+risk-highlighted **document**, market **benchmarks**, a grounded **Q&A chat**, and a one-click
+**negotiation email**. Analysis needs **no account**; an **optional** sign-in saves a history
+dashboard.
 
 Read in order before coding:
+0. [`docs/FEATURES.md`](docs/FEATURES.md) — **full catalogue of what the app does today**
 1. [`docs/01-project-brief.md`](docs/01-project-brief.md) — the idea & scope
 2. [`docs/03-api-contract.md`](docs/03-api-contract.md) — **the frozen contract (most important)**
 3. Your track: [`docs/04-lovable-ui-prompt.md`](docs/04-lovable-ui-prompt.md) /
@@ -28,6 +30,9 @@ Read in order before coding:
 - **Vector DB:** **Oracle Autonomous DB 23ai** AI Vector Search via the native `VECTOR` type +
   `VECTOR_DISTANCE` in plain SQL through `oracledb` (no `OracleVS`; simple in-memory cosine as the
   `FAKE_OCI` fallback). Collections/tables: `cuad_clauses` (market reference), `doc_clauses` (per-request, for chat).
+- **Accounts:** **SQLAlchemy** — email/password auth (bcrypt + HS256 JWT) backing an optional saved-
+  history dashboard. SQLite locally (`DATABASE_URL`); swappable to Oracle ADB via the same
+  `oracle+oracledb://` driver.
 - **Storage:** OCI Object Storage (ephemeral raw files). **Deploy:** OCI Compute (Ampere) — **the
   frontend bundle is served from OCI too** (nginx on the same VM, or an Object Storage static site).
 
@@ -74,8 +79,10 @@ and backend are built independently against them.
 - **No cloud access is ever required to run the app** (FAKE_OCI + mock mode).
 
 ## Guardrails for agents
-- This is a 48-hour hackathon: **prefer the simplest thing that demos.** Don't add auth, accounts,
-  databases-for-state, or features not in the brief's scope (`01-project-brief.md` → "Won't have").
+- This is a 48-hour hackathon: **prefer the simplest thing that demos.** Don't add features outside
+  the brief's scope (`01-project-brief.md` → "Won't have") without a clear reason. (Optional
+  accounts + a saved-history dashboard were since added as an opt-in enhancement — keep anonymous
+  analysis fully working; auth must never be required to analyse a contract.)
 - **OCI-first:** deploy/host only on Oracle Cloud. Never introduce Vercel/Netlify/third-party hosting
   or swap an OCI service for a non-OCI equivalent. `FAKE_OCI=1` + mock mode are **dev-only**; the
   judged demo must run on real OCI GenAI + 23ai. When unsure about OCI, see `docs/08-oci-onboarding.md`.
@@ -90,7 +97,9 @@ and backend are built independently against them.
 live resume point.** In short: the real OCI GenAI pipeline works end-to-end (verified over HTTP) and
 also runs offline (`FAKE_OCI=1` + mock mode). The UI is the redesigned no-scroll cockpit — document
 left, risk + RAG chat right — with light/dark theming, an animated processing screen, and branded PDF
-export. Oracle 23ai vector search is built but running on the **in-memory fallback**; OCI Object
-Storage + Compute deploy aren't done yet; multi-agent analysis is planned (`docs/09-multi-agent-plan.md`).
+export. On top: optional **accounts (JWT) + a saved-history dashboard**, a **sign-in-to-unlock**
+teaser, and a client-side **negotiation-email co-pilot**. Oracle 23ai vector search is built but
+running on the **in-memory fallback** (accounts on local SQLite); OCI Object Storage + Compute
+deploy aren't done yet; multi-agent analysis is planned (`docs/09-multi-agent-plan.md`).
 The real API contract is `frontend/src/lib/types.ts` ⇆ `backend/app/models/schemas.py` ⇆
 `docs/03-api-contract.md` — change all three together or none.

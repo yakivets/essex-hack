@@ -3,17 +3,21 @@
 _Last updated: 2026-06-03. Snapshot of what's built, what's left, and how to run it._
 
 > 📋 For a per-feature **"is it actually working?"** checklist, see
-> [`IMPLEMENTATION-TRACKER.md`](IMPLEMENTATION-TRACKER.md). For the project overview, see the
-> root [`README.md`](../README.md). This file is the run/resume guide.
+> [`IMPLEMENTATION-TRACKER.md`](IMPLEMENTATION-TRACKER.md). For a full feature catalogue see
+> [`FEATURES.md`](FEATURES.md). For the project overview, see the root [`README.md`](../README.md).
+> This file is the run/resume guide.
 
 ## TL;DR
 **The real OCI GenAI prototype works end-to-end** (verified over HTTP) and also runs fully offline
 (`FAKE_OCI=1` + mock mode): upload/sample → structured analysis → vector-grounded benchmarks (real
-CUAD corpus) → RAG chat with citations. The UI is the redesigned **no-scroll cockpit** — document
+CUAD corpus) → RAG chat with citations. On top of the analysis there are now **accounts (email +
+password, JWT)** with a **saved-history dashboard**, a **sign-in-to-unlock blur teaser**, and a
+**client-side negotiation-email co-pilot**. The UI is the redesigned **no-scroll cockpit** — document
 left, risk + chat right — with light/dark theme, an animated processing screen, and **branded PDF
-export**. Auth via `~/.oci/config`, region **uk-london-1**, chat **cohere.command-r-08-2024**,
+export**. OCI auth via `~/.oci/config`, region **uk-london-1**, chat **cohere.command-r-08-2024**,
 embeddings **cohere.embed-english-v3.0**. Vector store on the **in-memory fallback** (Oracle 23ai
-built, not connected). All work is **committed and merged to `main`**. No OCI deploy yet.
+built, not connected); accounts on **local SQLite** by default. All work is **committed** on
+`mykyta-dev`. No OCI deploy yet.
 
 ## Real OCI path — VERIFIED ✅ (this session)
 - `~/.oci/config` written + validated (authenticated as the Essex student user); GenAI confirmed
@@ -59,6 +63,13 @@ built, not connected). All work is **committed and merged to `main`**. No OCI de
   - `oracledb` enabled in `requirements.txt`; ADB/embeds vars added to `config.py` + `.env.example`.
 - **Real benchmark corpus:** `data/cuad_clauses.jsonl` (~6.3k real CUAD clauses) replaced the toy
   seed; `cuad_reference.py` loads a balanced subset (15/category) for fast warmup.
+- **Accounts + dashboard:** email/password auth (bcrypt + HS256 JWT, `api/auth_routes.py`,
+  `app/auth.py`), SQLAlchemy models (`models/db_models.py`) on SQLite by default
+  (`DATABASE_URL`, swappable to Oracle ADB). `GET/POST /api/analyses` save + list a user's history;
+  `GET /api/analysis/{id}` falls back to the DB (owner-checked) after the cache expires. Frontend:
+  `AuthModal`, `Dashboard`, `BlurTeaser` (sign-in-to-unlock), auto-save on login, contract-type label.
+- **Negotiation co-pilot:** `NegotiateModal`/`NegotiatePanel` + `lib/negotiationEmail.ts` draft a
+  ready-to-send email (collaborative/firm tone, pick which red flags) entirely client-side — no API call.
 - **Frontend redesign:** no-scroll two-pane results (`DocumentPane` + `RiskRail`), RAG chat moved
   into the rail as a tab, `DetailsDrawer` (shadcn Sheet) for depth panels, light/dark theme toggle,
   animated "contract under review" processing screen, **branded PDF export** (jsPDF). Old
@@ -97,8 +108,12 @@ npm run dev                                                    # http://localhos
 backend/app/
   main.py                FastAPI + CORS + /health
   config.py              settings (FAKE_OCI, OCI_* , cache TTL, max_clauses)
-  api/routes.py          /samples /analyze /analysis/{id} /chat — branches on FAKE_OCI
+  api/routes.py          /samples /analyze /analysis/{id} /chat /analyses — branches on FAKE_OCI
+  api/auth_routes.py     /auth/register /auth/login /auth/me (JWT)
+  auth.py                bcrypt hashing + HS256 JWT + current_user/optional_user deps
+  db.py                  SQLAlchemy engine/session (SQLite default; Oracle via DATABASE_URL)
   models/schemas.py      Pydantic mirroring frontend types.ts EXACTLY
+  models/db_models.py    User + Analysis ORM rows (dashboard history)
   services/cache.py      in-memory TTL cache (enables chat/refresh by id)
   data/fixtures.py       canned AnalysisResult (mirrors mockAnalysis.ts)
   data/samples/*.txt     3 sample contracts (used by sample_id in real mode)

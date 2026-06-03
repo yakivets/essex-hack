@@ -7,6 +7,8 @@ whose shape **exactly** matches the frontend's `src/lib/types.ts`, and answers g
 - **AI:** OCI Generative AI via the raw `oci` SDK — chat (`cohere.command-r-08-2024`) + embeddings
   (`cohere.embed-english-v3.0`).
 - **Vector search:** Oracle 23ai native `VECTOR` (via `oracledb`) **or** an in-memory cosine fallback.
+- **Accounts:** optional email/password auth (bcrypt + HS256 JWT) + a saved-history dashboard, via
+  SQLAlchemy (SQLite locally; Oracle ADB via the same driver). Analysis works fully anonymously.
 - **`FAKE_OCI=1`** stubs all cloud calls so the whole thing runs offline with no credentials.
 
 ## Run
@@ -55,24 +57,40 @@ TNS_ADMIN=/path/to/unzipped/wallet
 Other knobs (in `app/config.py`): `OCI_READ_TIMEOUT` (default 240s), `MAX_CLAUSES` (default 8),
 `CACHE_TTL_SECONDS`, `EMBED_DIM` (1024).
 
+**Accounts / dashboard** (optional — analysis works anonymously):
+
+```
+DATABASE_URL=sqlite:///./pactpilot.db   # default; Oracle: oracle+oracledb://ADMIN:pw@pactpilot_high
+JWT_SECRET=change-me-in-prod            # HS256 signing secret (use 32+ bytes)
+JWT_EXPIRE_HOURS=168                    # 7 days
+```
+
 ## Endpoints
 
 | Method | Path | Body / params | Returns |
 |---|---|---|---|
 | `GET` | `/api/samples` | — | `Sample[]` (3 contracts) |
 | `POST` | `/api/analyze` | multipart: `file` **or** `text` **or** `sample_id` | `AnalysisResult` |
-| `GET` | `/api/analysis/{id}` | — | cached `AnalysisResult` (404 after TTL) |
+| `GET` | `/api/analysis/{id}` | — | `AnalysisResult` (cache → DB fallback for saved rows) |
 | `POST` | `/api/chat` | JSON `{analysis_id, message, clause_id?}` | `{answer, citations[]}` |
+| `POST` | `/api/auth/register` · `/api/auth/login` | JSON `{email, password}` | `{token, user}` |
+| `GET` | `/api/auth/me` | Bearer token | `{id, email}` |
+| `GET` | `/api/analyses` | Bearer token | `AnalysisSummary[]` (user's history) |
+| `POST` | `/api/analyses` | Bearer token + `{analysis_id}` | `AnalysisSummary` (saves a cached result) |
 | `GET` | `/health` | — | `{status, fake_oci}` |
 
 ## Layout
 
 ```
 app/
-  main.py                FastAPI app + CORS + /health
-  config.py              settings (FAKE_OCI, OCI_*, timeouts, max_clauses)
-  api/routes.py          the 4 endpoints (+ branches on FAKE_OCI)
+  main.py                FastAPI app + CORS + /health (+ init_db on startup)
+  config.py              settings (FAKE_OCI, OCI_*, timeouts, max_clauses, DB/JWT)
+  api/routes.py          analyze/chat/samples/analysis + analyses (save/list)
+  api/auth_routes.py     /auth/register · /auth/login · /auth/me
+  auth.py                bcrypt hashing + HS256 JWT + current_user/optional_user deps
+  db.py                  SQLAlchemy engine/session (SQLite default; Oracle via DATABASE_URL)
   models/schemas.py      Pydantic models — MIRROR frontend types.ts EXACTLY
+  models/db_models.py    User + Analysis ORM rows (dashboard history)
   services/cache.py      in-memory TTL result cache (enables chat / refresh by id)
   oci/genai.py           OCI GenAI client + chat() + llm_json(prompt, schema)
   pipeline/
