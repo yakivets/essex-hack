@@ -12,6 +12,7 @@ in the linked docs.
 - Local vs deployed architecture → [`11-local-vs-deployed-architecture.md`](11-local-vs-deployed-architecture.md)
 - **Dev onboarding (local + real OCI, Windows)** → [`12-dev-onboarding-local-oci.md`](12-dev-onboarding-local-oci.md)
 - **Deploy + team handoff** → [`13-oci-deploy-and-handoff.md`](13-oci-deploy-and-handoff.md)
+- **CTO task list (Mykyta)** → [`14-cto-mykyta-handoff-tasks.md`](14-cto-mykyta-handoff-tasks.md)
 - Team & onboarding → [`07-engineer-context.md`](07-engineer-context.md)
 
 ## Architecture (one picture)

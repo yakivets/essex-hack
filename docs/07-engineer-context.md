@@ -25,7 +25,7 @@ match the contract exactly; merge = flip `VITE_API_BASE_URL`. The backend return
 ## Team split (6 people: 2 strong · 2 intermediate · 2 non-tech)
 | Person | Pod | Owns | Start with |
 |---|---|---|---|
-| **Strong #1 (Lead)** | Glue + Infra | Architecture, API contract, **OCI setup & deploy**, mentoring the team on OCI, integration, demo wiring | [08-oci-onboarding.md](08-oci-onboarding.md) → [06-oracle-setup.md](06-oracle-setup.md) |
+| **Strong #1 (Lead)** | Glue + Infra | Architecture, API contract, **OCI setup & deploy**, mentoring the team on OCI, integration, demo wiring | **[14-cto-mykyta-handoff-tasks.md](14-cto-mykyta-handoff-tasks.md)** → [08-oci-onboarding.md](08-oci-onboarding.md) → [06-oracle-setup.md](06-oracle-setup.md) |
 | **Strong #2** | AI Core | the async analysis orchestrator, vector store (23ai SQL), benchmark + risk steps, chat RAG | [05-backend-plan.md](05-backend-plan.md) Ph 3–5 |
 | **Intermediate A** | Doc Pipeline | ingestion + segmentation (text + char offsets) | 05 Phase 1 |
 | **Intermediate B** | Analysis steps | classify / extract / summary / missing steps | 05 Phase 4 |
