@@ -1,16 +1,19 @@
 # Build Status — resume point
 
-_Last updated: 2026-06-02. Snapshot of what's built, what's left, and how to run it._
+_Last updated: 2026-06-03. Snapshot of what's built, what's left, and how to run it._
 
 > 📋 For a per-feature **"is it actually working?"** checklist, see
-> [`IMPLEMENTATION-TRACKER.md`](IMPLEMENTATION-TRACKER.md). This file is the run/resume guide.
+> [`IMPLEMENTATION-TRACKER.md`](IMPLEMENTATION-TRACKER.md). For the project overview, see the
+> root [`README.md`](../README.md). This file is the run/resume guide.
 
 ## TL;DR
-**The real OCI GenAI prototype now works end-to-end** (verified over HTTP): upload/sample →
-real structured analysis → vector-grounded benchmarks → grounded RAG chat with citations.
-Auth is via `~/.oci/config` (API key), region **uk-london-1**, chat **cohere.command-r-08-2024**,
-embeddings **cohere.embed-english-v3.0**. Vector store uses the **in-memory fallback** (Oracle
-ADB deliberately off for now). No deploy yet. Nothing is committed (all changes in the working tree).
+**The real OCI GenAI prototype works end-to-end** (verified over HTTP) and also runs fully offline
+(`FAKE_OCI=1` + mock mode): upload/sample → structured analysis → vector-grounded benchmarks (real
+CUAD corpus) → RAG chat with citations. The UI is the redesigned **no-scroll cockpit** — document
+left, risk + chat right — with light/dark theme, an animated processing screen, and **branded PDF
+export**. Auth via `~/.oci/config`, region **uk-london-1**, chat **cohere.command-r-08-2024**,
+embeddings **cohere.embed-english-v3.0**. Vector store on the **in-memory fallback** (Oracle 23ai
+built, not connected). All work is **committed and merged to `main`**. No OCI deploy yet.
 
 ## Real OCI path — VERIFIED ✅ (this session)
 - `~/.oci/config` written + validated (authenticated as the Essex student user); GenAI confirmed
@@ -54,19 +57,25 @@ ADB deliberately off for now). No deploy yet. Nothing is committed (all changes 
     dumping all clauses; orchestrator indexes the analysed clauses into `doc_clauses`.
   - `scripts/ingest_cuad.py` — one-off to build `cuad_clauses` (auto-loaded for in-memory).
   - `oracledb` enabled in `requirements.txt`; ADB/embeds vars added to `config.py` + `.env.example`.
+- **Real benchmark corpus:** `data/cuad_clauses.jsonl` (~6.3k real CUAD clauses) replaced the toy
+  seed; `cuad_reference.py` loads a balanced subset (15/category) for fast warmup.
+- **Frontend redesign:** no-scroll two-pane results (`DocumentPane` + `RiskRail`), RAG chat moved
+  into the rail as a tab, `DetailsDrawer` (shadcn Sheet) for depth panels, light/dark theme toggle,
+  animated "contract under review" processing screen, **branded PDF export** (jsPDF). Old
+  single-column components removed.
+- **Backend reliability/latency:** OCI read timeout 60→240s (fixes timeout-502 on long generations),
+  `MAX_CLAUSES`=8, CUAD warmup capped; blocking LLM calls off-loaded to a threadpool; tracebacks
+  logged on failure.
+- **Committed + merged to `main`** (branch `mykyta-dev` kept for ongoing work).
 
 ## Left to do ⏳
-1. ~~Install real-mode deps~~ ✅ done (`oci pdfplumber python-docx` in venv).
-2. ~~OCI setup + fill `.env` + verify real path~~ ✅ done (see "Real OCI path — VERIFIED").
-3. **Run the full prototype** for a UI demo: terminal 1 `uvicorn app.main:app --port 8000`;
-   terminal 2 `bun run dev` in `frontend/`; open `http://localhost:8080`, click a sample.
-4. **Latency polish (optional):** ~45s is over the 30–40s target. Could split Layer-1 vs depth
-   into concurrent calls, or cap clause count, to make the verdict appear faster.
-5. **Oracle 23ai (next):** set `ADB_*`/`TNS_ADMIN`, run `python -m scripts.ingest_cuad`, to swap
-   the in-memory store for real native VECTOR search. (Code already supports it.)
-6. ~~Reconcile `docs/03-api-contract.md`~~ ✅ done — matches `types.ts` / `schemas.py`.
-7. **Deploy** decision for the TanStack Start server + API on OCI.
-8. **Commit/push** — nothing committed yet.
+1. **Oracle 23ai (next vector slice):** set `ADB_*`/`TNS_ADMIN`, run `python -m scripts.ingest_cuad`,
+   to swap the in-memory store for native `VECTOR` search. (Code already supports it.)
+2. **OCI Object Storage** for raw uploads (ephemeral) — not implemented yet.
+3. **Deploy** the FastAPI API + frontend bundle on OCI Compute (Ampere) — see `docs/06-oracle-setup.md`.
+4. **Multi-agent analysis** — split the single LLM call into specialised agents (accuracy + real
+   per-step progress). Plan: `docs/09-multi-agent-plan.md`.
+5. **Latency** is still ~30–45s (one big LLM call); the multi-agent split (Layer-1 first) is the real win.
 
 ## How to run (two terminals, PowerShell)
 ```powershell
