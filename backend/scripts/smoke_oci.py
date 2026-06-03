@@ -71,7 +71,7 @@ def main() -> None:
     from app.pipeline.orchestrator import run_analysis
 
     sample = (Path(__file__).resolve().parent.parent
-              / "app" / "data" / "samples" / "saas-msa.txt").read_text(encoding="utf-8")
+              / "app" / "data" / "samples" / "saas-subscription.txt").read_text(encoding="utf-8")
     try:
         result = run_analysis(sample)
         v = result["verdict"]

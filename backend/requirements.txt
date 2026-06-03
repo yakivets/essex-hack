@@ -13,3 +13,8 @@ python-docx
 # Oracle 23ai vector search (benchmark + RAG chat). Optional: only needed when
 # ADB_DSN is set; without it the in-memory cosine fallback is used.
 oracledb
+
+# Accounts + dashboard (SQLite locally, swappable to Oracle via DATABASE_URL).
+sqlalchemy
+bcrypt
+pyjwt

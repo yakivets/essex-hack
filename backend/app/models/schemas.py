@@ -121,6 +121,21 @@ class AnalysisResult(BaseModel):
     scenarios: Optional[list[Scenario]] = None
 
 
+class AnalysisSummary(BaseModel):
+    """Lightweight row for the dashboard history list."""
+
+    id: str
+    filename: str
+    contract_type: str
+    risk_score: int
+    risk_level: RiskLevel
+    created_at: Optional[str] = None
+
+
+class SaveAnalysisRequest(BaseModel):
+    analysis_id: str
+
+
 class ChatRequest(BaseModel):
     analysis_id: str
     message: str

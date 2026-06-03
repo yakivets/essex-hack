@@ -112,3 +112,23 @@ export type AnalyzeInput =
   | { kind: "file"; file: File }
   | { kind: "text"; text: string }
   | { kind: "sample"; sampleId: string };
+
+// --- Accounts + dashboard ---
+export interface User {
+  id: string;
+  email: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+export interface AnalysisSummary {
+  id: string;
+  filename: string;
+  contract_type: string;
+  risk_score: number;
+  risk_level: RiskLevel;
+  created_at?: string | null;
+}

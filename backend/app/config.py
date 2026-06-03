@@ -37,6 +37,13 @@ class Settings(BaseSettings):
     # Vector dimension. Fake embeddings + Cohere v3 models are 1024-dim.
     embed_dim: int = 1024
 
+    # Accounts + dashboard. SQLite locally; swap to OCI Oracle by changing
+    # DATABASE_URL to oracle+oracledb://ADMIN:...@adb_high (same SQLAlchemy driver).
+    database_url: str = "sqlite:///./pactpilot.db"
+    # HS256 secret for signing JWTs. Override in .env for anything but local dev.
+    jwt_secret: str = "dev-secret-change-me"
+    jwt_expire_hours: int = 168  # 7 days
+
     @property
     def use_oracle(self) -> bool:
         """True when an Oracle ADB DSN is configured; else use in-memory store."""
