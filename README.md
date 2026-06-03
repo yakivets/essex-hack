@@ -38,7 +38,7 @@ catches), and **legit** (a balanced mutual NDA).
                  │  REST  (frozen API contract: types.ts ⇆ schemas.py)
                  ▼
             Backend API  (FastAPI on OCI Compute)
-                 │   own async orchestrator — no LangChain / no LangGraph
+                 │   own async orchestrator 
         ┌────────┼───────────────┬───────────────────┐
         ▼        ▼               ▼                   ▼
    OCI GenAI   Oracle 23ai     in-memory          (OCI Object
