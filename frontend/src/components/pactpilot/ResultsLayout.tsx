@@ -3,6 +3,7 @@ import { TopBar } from "./TopBar";
 import { DocumentPane } from "./DocumentPane";
 import { RiskRail } from "./RiskRail";
 import { DetailsDrawer } from "./DetailsDrawer";
+import { NegotiateModal } from "./NegotiateModal";
 import type { AnalysisResult } from "@/lib/types";
 
 interface Props {
@@ -16,6 +17,7 @@ export function ResultsLayout({ data, onHome }: Props) {
   const [scrollToken, setScrollToken] = useState(0);
   const [prefillClauseId, setPrefillClauseId] = useState<string | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [negotiateOpen, setNegotiateOpen] = useState(false);
 
   function selectClause(id: string, fromFlag?: number) {
     setSelectedClauseId(id);
@@ -38,7 +40,12 @@ export function ResultsLayout({ data, onHome }: Props) {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
-      <TopBar onHome={onHome} onNewAnalysis={onHome} onOpenDetails={() => setDetailsOpen(true)} />
+      <TopBar
+        onHome={onHome}
+        onNewAnalysis={onHome}
+        onOpenDetails={() => setDetailsOpen(true)}
+        onNegotiate={() => setNegotiateOpen(true)}
+      />
 
       <main className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden scroll-thin p-3 sm:p-4">
         <div className="lg:h-full max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(460px,560px)] gap-3 sm:gap-4">
@@ -68,6 +75,7 @@ export function ResultsLayout({ data, onHome }: Props) {
       </main>
 
       <DetailsDrawer data={data} open={detailsOpen} onOpenChange={setDetailsOpen} />
+      <NegotiateModal data={data} open={negotiateOpen} onOpenChange={setNegotiateOpen} />
     </div>
   );
 }

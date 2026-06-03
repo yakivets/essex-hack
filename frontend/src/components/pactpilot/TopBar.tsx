@@ -1,4 +1,4 @@
-import { ShieldCheck, RotateCcw, PanelRightOpen } from "lucide-react";
+import { ShieldCheck, RotateCcw, PanelRightOpen, Handshake } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
 function Wordmark() {
@@ -28,9 +28,10 @@ interface Props {
   onHome?: () => void;
   onNewAnalysis?: () => void;
   onOpenDetails?: () => void;
+  onNegotiate?: () => void;
 }
 
-export function TopBar({ onHome, onNewAnalysis, onOpenDetails }: Props) {
+export function TopBar({ onHome, onNewAnalysis, onOpenDetails, onNegotiate }: Props) {
   return (
     <header className="shrink-0 z-40 backdrop-blur-md bg-card/70 border-b border-border">
       <div className="max-w-[1600px] mx-auto px-5 h-14 flex items-center justify-between">
@@ -48,6 +49,15 @@ export function TopBar({ onHome, onNewAnalysis, onOpenDetails }: Props) {
         )}
 
         <div className="flex items-center gap-2">
+          {onNegotiate && (
+            <button
+              type="button"
+              onClick={onNegotiate}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-foreground px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-hover transition-colors shadow-card"
+            >
+              <Handshake size={14} /> Negotiate
+            </button>
+          )}
           {onOpenDetails && (
             <button
               type="button"
