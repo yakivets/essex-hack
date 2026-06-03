@@ -86,5 +86,9 @@ and backend are built independently against them.
 - "Not legal advice" — keep the disclaimer; this is a first-pass tool, not a lawyer.
 
 ## Status
-Planning complete; implementation not yet started. Folders/scaffold land with the first PRs of each
-track (see `docs/02-implementation-plan.md` timeline).
+Implementation underway. **See [`docs/STATUS.md`](docs/STATUS.md) for the live resume point** (what's
+built, what's left, how to run). In short: `frontend/` (Lovable TanStack Start app) + `backend/`
+(FastAPI) run end-to-end on mock/canned data; the real OCI GenAI pipeline is written behind `FAKE_OCI`
+but not yet verified (needs OCI creds in `backend/.env`). Note: the real API contract is the
+frontend's `src/lib/types.ts` (backend `schemas.py` matches it); `docs/03-api-contract.md` is now
+reconciled to that shape.

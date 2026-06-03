@@ -1,0 +1,15 @@
+# Core API (Stage A canned needs only these).
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+
+# Real GenAI pipeline (needed when FAKE_OCI=0).
+oci
+pdfplumber
+python-docx
+
+# Oracle 23ai vector search (benchmark + RAG chat). Optional: only needed when
+# ADB_DSN is set; without it the in-memory cosine fallback is used.
+oracledb
