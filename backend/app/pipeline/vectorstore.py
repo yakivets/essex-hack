@@ -100,11 +100,18 @@ class OracleVectorStore:
     def _connect(self):
         import oracledb
 
-        return oracledb.connect(
-            user=settings.adb_user,
-            password=settings.adb_password,
-            dsn=settings.adb_dsn,
-        )
+        kwargs: dict = {
+            "user": settings.adb_user,
+            "password": settings.adb_password,
+            "dsn": settings.adb_dsn,
+        }
+        # Thin-mode ADB needs explicit wallet paths (TNS_ADMIN alone is not always enough).
+        if settings.tns_admin:
+            kwargs["config_dir"] = settings.tns_admin
+            kwargs["wallet_location"] = settings.tns_admin
+            if settings.wallet_password:
+                kwargs["wallet_password"] = settings.wallet_password
+        return oracledb.connect(**kwargs)
 
     def _ensure_schema(self) -> None:
         dim = settings.embed_dim
