@@ -115,7 +115,9 @@ npm run dev                       # open the URL it prints (http://localhost:808
 | **Real OCI pipeline** | `FAKE_OCI=0` + `OCI_*` filled | `VITE_API_BASE_URL=http://localhost:8000` |
 
 For real mode you need OCI Generative AI access and `~/.oci/config` — see
-[`docs/06-oracle-setup.md`](docs/06-oracle-setup.md) and [`docs/08-oci-onboarding.md`](docs/08-oci-onboarding.md).
+[`docs/12-dev-onboarding-local-oci.md`](docs/12-dev-onboarding-local-oci.md) (step-by-step, Windows),
+[`docs/08-oci-onboarding.md`](docs/08-oci-onboarding.md) (mental model), and
+[`docs/06-oracle-setup.md`](docs/06-oracle-setup.md) (deploy).
 
 ---
 

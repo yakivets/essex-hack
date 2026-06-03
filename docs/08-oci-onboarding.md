@@ -140,6 +140,7 @@ simpler for the demo.)
 - Don't leave a paid resource running "just in case." There is no "just in case" in a hackathon.
 
 ## Where to go next
+- **Step-by-step laptop setup (Windows, smoke test, upload PDF)** → [`12-dev-onboarding-local-oci.md`](12-dev-onboarding-local-oci.md)
 - Operational steps + exact `.env` keys → [`06-oracle-setup.md`](06-oracle-setup.md)
 - How OCI fits the whole system → [`02-implementation-plan.md`](02-implementation-plan.md)
 - Backend code that calls these services → [`05-backend-plan.md`](05-backend-plan.md)

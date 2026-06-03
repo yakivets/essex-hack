@@ -9,6 +9,8 @@ in the linked docs.
 - UI build → [`04-lovable-ui-prompt.md`](04-lovable-ui-prompt.md)
 - Backend build → [`05-backend-plan.md`](05-backend-plan.md)
 - Oracle + deploy → [`06-oracle-setup.md`](06-oracle-setup.md)
+- Local vs deployed architecture → [`11-local-vs-deployed-architecture.md`](11-local-vs-deployed-architecture.md)
+- **Dev onboarding (local + real OCI, Windows)** → [`12-dev-onboarding-local-oci.md`](12-dev-onboarding-local-oci.md)
 - Team & onboarding → [`07-engineer-context.md`](07-engineer-context.md)
 
 ## Architecture (one picture)

@@ -13,8 +13,9 @@ Lovable-built UI → FastAPI (no LangChain) → OCI GenAI + Oracle 23ai. Full co
 **OCI-first — and none of us have used OCI before.** The *entire deployed solution* runs on Oracle
 Cloud (UI bundle + API + GenAI + 23ai + Object Storage); no Vercel/Netlify/third-party hosting. The
 lead owns the OCI account and **mentors the team against [08-oci-onboarding.md](08-oci-onboarding.md)**
-— start there before touching any cloud resource. `FAKE_OCI=1` + mock mode keep everyone unblocked
-during dev, but the judged demo must run on real OCI.
+— start there before touching any cloud resource. For a **hands-on laptop path** (`.env`, CLI,
+`smoke_oci`, two CMD windows), see **[12-dev-onboarding-local-oci.md](12-dev-onboarding-local-oci.md)**.
+`FAKE_OCI=1` + mock mode keep everyone unblocked during dev, but the judged demo must run on real OCI.
 
 ## How we avoid collisions
 The **API contract is the seam.** UI builds against mock JSON; backend builds the real JSON; both

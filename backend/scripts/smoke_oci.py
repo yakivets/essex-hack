@@ -1,7 +1,7 @@
 """Smoke test the real OCI Generative AI connection (chat + embeddings + pipeline).
 
 Run AFTER filling backend/.env (FAKE_OCI=0) and setting up ~/.oci/config:
-    .\.venv\Scripts\python.exe -m scripts.smoke_oci
+    .venv\\Scripts\\python.exe -m scripts.smoke_oci
 
 It does the minimum to prove connectivity, then a full analysis of a sample:
   1) one chat() call            -> proves the chat model + auth + endpoint
@@ -70,8 +70,16 @@ def main() -> None:
     print("[3/3] run_analysis(sample) ...", flush=True)
     from app.pipeline.orchestrator import run_analysis
 
-    sample = (Path(__file__).resolve().parent.parent
-              / "app" / "data" / "samples" / "saas-msa.txt").read_text(encoding="utf-8")
+    samples_dir = Path(__file__).resolve().parent.parent / "app" / "data" / "samples"
+    sample_path = samples_dir / "saas-subscription.txt"
+    if not sample_path.exists():
+        available = sorted(samples_dir.glob("*.txt"))
+        if not available:
+            print("   FAILED: no sample contracts in app/data/samples/")
+            sys.exit(1)
+        sample_path = available[0]
+    print(f"   using {sample_path.name}", flush=True)
+    sample = sample_path.read_text(encoding="utf-8")
     try:
         result = run_analysis(sample)
         v = result["verdict"]
