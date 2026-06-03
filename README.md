@@ -1,8 +1,10 @@
 # PactPilot — AI Contract Review
 
 > Drop in a contract, get a lawyer's first look in ~30 seconds: a plain-English **risk verdict**, an
-> interactive **risk-highlighted document**, market **benchmarks**, and a grounded **Q&A chat** —
-> no login, nothing stored.
+> interactive **risk-highlighted document**, market **benchmarks**, a grounded **Q&A chat**, and a
+> one-click **negotiation email**. No account needed to analyse — sign in to save your history.
+
+> 📖 For a complete, end-to-end catalogue of everything PactPilot does, see [`docs/FEATURES.md`](docs/FEATURES.md).
 
 Built for the **IADS Agentic AI Hackathon**. The entire deployed solution runs on **Oracle Cloud
 Infrastructure (OCI)**: Generative AI for reasoning + embeddings, Autonomous DB 23ai for vector
@@ -21,9 +23,12 @@ A small-business founder pastes or uploads a contract and immediately sees:
 | **Verdict** | A 0–100 risk score, LOW/MEDIUM/HIGH level, a one-line summary, key facts, and a fairness meter (favours you ↔ favours them). |
 | **Document cockpit** | The contract with each clause highlighted by risk; click a clause → plain-English meaning, why it's risky, a market benchmark, and a suggested fix. |
 | **Red flags** | The genuinely dangerous clauses, ranked, each linked to its place in the document. |
+| **Depth panels** | Obligations (yours vs theirs), money, key dates, exit difficulty, missing protections, and "what if" scenarios. |
 | **Benchmarks** | Each clause is compared against a real corpus of market clauses (CUAD) via vector search — *"harsher than 78% of comparable clauses."* |
 | **Q&A chat** | Ask anything about the contract; answers are grounded in the clauses (RAG) and cite them. |
+| **Negotiation co-pilot** | Turn the red flags into a ready-to-send email — pick the points, choose a tone (collaborative / firm), copy & send. |
 | **Export** | One click → a branded PDF summary. |
+| **Accounts & dashboard** | Optional sign-in (email + password) saves each analysis to a history dashboard you can reopen later. |
 
 Three built-in sample contracts span the risk spectrum so you can see it work instantly:
 **dangerous** (a developer-drafted agency agreement), **suspicious** (a SaaS subscription with quiet
@@ -61,9 +66,11 @@ See [`docs/02-implementation-plan.md`](docs/02-implementation-plan.md) for the f
 | | |
 |---|---|
 | **Frontend** | React 19 · TypeScript · Vite · TanStack Start (SSR) · Tailwind CSS v4 · shadcn/ui · lucide-react · jsPDF · light/dark theming |
-| **Backend** | Python 3.11 · FastAPI · Pydantic · **no LangChain / no LangGraph** (own `asyncio` orchestrator) |
+| **Backend** | Python 3.11 · FastAPI · Pydantic · SQLAlchemy · **no LangChain / no LangGraph** |
 | **AI** | OCI Generative AI via the raw `oci` SDK — chat `cohere.command-r-08-2024`, embeddings `cohere.embed-english-v3.0` |
 | **Vector DB** | Oracle Autonomous DB 23ai native `VECTOR` (via `oracledb`) — or in-memory cosine fallback |
+| **Accounts DB** | SQLite locally; Oracle ADB via the same `oracle+oracledb://` SQLAlchemy driver |
+| **Auth** | bcrypt password hashing · HS256 JWT (PyJWT) |
 | **Data** | CUAD legal corpus (`cuad_clauses.jsonl`) as the market-reference benchmark |
 | **Docs parsing** | pdfplumber (PDF), python-docx (DOCX) |
 
@@ -125,8 +132,11 @@ For real mode you need OCI Generative AI access and `~/.oci/config` — see
 |---|---|---|
 | `GET` | `/api/samples` | The 3 built-in sample contracts |
 | `POST` | `/api/analyze` | multipart form: `file` (PDF/DOCX) **or** `text` **or** `sample_id` → `AnalysisResult` |
-| `GET` | `/api/analysis/{id}` | Re-fetch a cached result (404 after TTL) |
+| `GET` | `/api/analysis/{id}` | Re-fetch a result (cache → DB fallback for saved analyses) |
 | `POST` | `/api/chat` | `{ analysis_id, message, clause_id? }` → `{ answer, citations[] }` |
+| `POST` | `/api/auth/register` · `/api/auth/login` | Email + password → `{ token, user }` |
+| `GET` | `/api/auth/me` | Current user (Bearer token) |
+| `GET` · `POST` | `/api/analyses` | List / save the signed-in user's analyses |
 | `GET` | `/health` | Liveness + whether `FAKE_OCI` is on |
 
 The exact JSON shapes are the **frozen contract**: `frontend/src/lib/types.ts` ⇆
@@ -138,10 +148,11 @@ Never change a field without updating all three.
 ## Project status
 
 - ✅ **Working & verified:** FastAPI + real OCI GenAI analysis, RAG chat with citations, vector
-  benchmarks (in-memory, real CUAD corpus), full redesigned UI (no-scroll cockpit, dark mode,
+  benchmarks (in-memory, real CUAD corpus), accounts (JWT) + saved-history dashboard, sign-in-to-unlock
+  teaser, client-side negotiation-email co-pilot, full redesigned UI (no-scroll cockpit, dark mode,
   animated processing, branded PDF export). Runs end-to-end on real OCI **and** offline (mock/canned).
 - 🟡 **Built, not yet connected:** Oracle ADB 23ai native vector store (currently using the in-memory
-  fallback — code is ready, just needs `ADB_*` + a wallet).
+  fallback — code is ready, just needs `ADB_*` + a wallet). Accounts run on local SQLite by default.
 - ⏳ **Not started:** OCI Object Storage, deployment to OCI Compute, the multi-agent pipeline
   (designed in [`docs/09-multi-agent-plan.md`](docs/09-multi-agent-plan.md)).
 
@@ -155,6 +166,7 @@ real-mode latency is ~30–45s.
 | Doc | What |
 |---|---|
 | [`CLAUDE.md`](CLAUDE.md) | Agent/contributor guide — read first |
+| [`docs/FEATURES.md`](docs/FEATURES.md) | **Full feature catalogue (everything the app does)** |
 | [`docs/01-project-brief.md`](docs/01-project-brief.md) | The idea, persona, scope |
 | [`docs/02-implementation-plan.md`](docs/02-implementation-plan.md) | Architecture + how it fits together |
 | [`docs/03-api-contract.md`](docs/03-api-contract.md) | **The frozen API contract** |

@@ -1,7 +1,9 @@
 # PactPilot Frontend
 
-The web UI — a no-login, single-page experience: upload/sample → animated processing →
-a full-viewport results cockpit (document on the left, risk + RAG chat on the right).
+The web UI — a single-page experience: upload/sample → animated processing → a full-viewport
+results cockpit (document on the left, risk + RAG chat on the right), plus a negotiation-email
+co-pilot and an optional account + saved-history dashboard. Analysis needs no account; signing in
+just saves your history.
 
 - **Stack:** React 19 · TypeScript · Vite · **TanStack Start** (SSR) · Tailwind CSS v4 · shadcn/ui ·
   lucide-react · jsPDF.
@@ -40,10 +42,10 @@ That env var is the **only** integration point. Mock mode (`empty`) returns `moc
 src/
   routes/
     __root.tsx           app shell (head, error wrappers)
-    index.tsx            the single page: upload → processing → results
+    index.tsx            the single page: upload → processing → results / dashboard
   components/
     pactpilot/           the app's own components:
-      TopBar.tsx           logo (→home), Details drawer trigger, theme toggle, New
+      TopBar.tsx           logo (→home), Details drawer trigger, theme toggle, sign-in/dashboard
       UploadHero.tsx       landing: drag-drop / paste / sample chips
       Processing.tsx       animated "contract under review" wait screen
       ResultsLayout.tsx    no-scroll two-pane shell (owns selection + chat state)
@@ -52,13 +54,19 @@ src/
       ChatPanel.tsx        RAG chat (grounded answers + clickable citations)
       DetailsDrawer.tsx    shadcn Sheet with depth panels (obligations, money, dates, exit…)
       Sections.tsx         the depth-panel cards
+      NegotiateModal.tsx / NegotiatePanel.tsx  draft a negotiation email (tone + flag picker)
+      AuthModal.tsx        register / login dialog
+      BlurTeaser.tsx       sign-in-to-unlock overlay for anonymous users
+      Dashboard.tsx        saved-history list (reopen / new analysis)
       ThemeToggle.tsx      light/dark switch
       risk.tsx             risk colour / label helpers + RiskBadge
     ui/                  shadcn/ui primitives (Sheet, Tabs, …)
   lib/
-    api.ts               getSamples / analyze / getAnalysis / chat  (mock-or-real)
+    api.ts               samples / analyze / getAnalysis / chat / auth / analyses (mock-or-real)
+    auth.tsx             auth context (token in localStorage, pushed into api.ts)
     types.ts             AnalysisResult & friends — the FROZEN contract (mirror of schemas.py)
     mockAnalysis.ts      sample data for mock mode
+    negotiationEmail.ts  build the negotiation email from the analysis (client-side)
     exportPdf.ts         branded PDF export (jsPDF, dynamically imported)
     utils.ts             cn() etc.
   styles.css             Tailwind v4 + design tokens (light + .dark) + animations
