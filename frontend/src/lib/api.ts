@@ -40,7 +40,11 @@ export async function getAnalysis(id: string): Promise<AnalysisResult> {
   return res.json();
 }
 
-export async function chat(analysisId: string, message: string, clauseId?: string): Promise<ChatResponse> {
+export async function chat(
+  analysisId: string,
+  message: string,
+  clauseId?: string,
+): Promise<ChatResponse> {
   if (useMock) {
     await wait(900);
     const clause = clauseId ? mockAnalysis.clauses.find((c) => c.id === clauseId) : undefined;
