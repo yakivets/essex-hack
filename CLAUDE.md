@@ -86,9 +86,11 @@ and backend are built independently against them.
 - "Not legal advice" — keep the disclaimer; this is a first-pass tool, not a lawyer.
 
 ## Status
-Implementation underway. **See [`docs/STATUS.md`](docs/STATUS.md) for the live resume point** (what's
-built, what's left, how to run). In short: `frontend/` (Lovable TanStack Start app) + `backend/`
-(FastAPI) run end-to-end on mock/canned data; the real OCI GenAI pipeline is written behind `FAKE_OCI`
-but not yet verified (needs OCI creds in `backend/.env`). Note: the real API contract is the
-frontend's `src/lib/types.ts` (backend `schemas.py` matches it); `docs/03-api-contract.md` is now
-reconciled to that shape.
+**See [`README.md`](README.md) for the full overview and [`docs/STATUS.md`](docs/STATUS.md) for the
+live resume point.** In short: the real OCI GenAI pipeline works end-to-end (verified over HTTP) and
+also runs offline (`FAKE_OCI=1` + mock mode). The UI is the redesigned no-scroll cockpit — document
+left, risk + RAG chat right — with light/dark theming, an animated processing screen, and branded PDF
+export. Oracle 23ai vector search is built but running on the **in-memory fallback**; OCI Object
+Storage + Compute deploy aren't done yet; multi-agent analysis is planned (`docs/09-multi-agent-plan.md`).
+The real API contract is `frontend/src/lib/types.ts` ⇆ `backend/app/models/schemas.py` ⇆
+`docs/03-api-contract.md` — change all three together or none.
