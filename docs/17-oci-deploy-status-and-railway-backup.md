@@ -11,7 +11,7 @@
 
 | Track | Status |
 |-------|--------|
-| **OCI (primary — judging)** | VM created; **no public demo URL yet**. Blocked by **~0.5 GB RAM** on `pactpilot-vm` (`dnf` OOM-killed). **Resize shape in OCI**, then finish packages + nginx + app. |
+| **OCI (primary — judging)** | **New A1 VM deployed** (`140.238.78.156`, 11 GiB RAM). App **running on box** (API + frontend + nginx). **Public browser URL blocked** until VCN opens **TCP 80** (see below). Old `pactpilot-vm` Micro abandoned. |
 | **ADB + GenAI (laptop)** | **Done** — real GenAI smoke OK; `cuad_clauses` ingested on Autonomous DB; wallet path fix on branch `fix/adb-wallet-connection` (commit `8086272`). |
 | **Railway (backup)** | **Possible** for a quick public URL (~**4–8 h** for a useful backup). **Does not replace** hackathon requirement that the **judged demo runs on OCI**. |
 
@@ -34,16 +34,30 @@
 | **SSH** | Key: `C:\Users\ankit\Documents\hackathon\ssh-key-2026-06-03.key` — login works as `opc`. |
 | **Swap (workaround)** | Added `/swapfile2` (2 GiB) — total swap ~2.5 GiB. |
 
-### In progress / blocked
+### Deployed on new instance (2026-06-04)
 
 | Item | Detail |
 |------|--------|
-| **VM RAM** | `free -h` showed **Mem: 498 MiB total** — too small for `dnf install` (nginx, nodejs) and for running API + Node + nginx together. |
-| **Package install** | `sudo dnf install -y nginx` and `nodejs npm` → **`Killed`** (kernel OOM; confirmed in `dmesg`). |
-| **nginx / node / git on VM** | **Not installed** yet on the VM. |
-| **App on VM** | Repo not cloned; no `.env` / wallet on VM; no systemd/nginx; **no `/health` on public IP**. |
-| **VCN port 80** | Not verified yet (needed for browser demo). |
-| **Shape change** | Instance was **Stopping** to allow **Edit / Change shape** — target **≥ 4 GB RAM** (Ampere A1 flex or larger x86 if available). |
+| **Hostname** | `hackathon` (OCI name `instance-20260604-0047`) |
+| **Public IP** | **http://140.238.78.156** (works on VM localhost; external needs VCN rule) |
+| **Shape** | **VM.Standard.A1.Flex** (~11 GiB RAM) |
+| **Stack** | `pactpilot-api` (uvicorn :8000), `pactpilot-web` (vite preview :3000), nginx :80 |
+| **On VM** | `curl http://127.0.0.1/health` → `{"status":"ok","fake_oci":false}`; `/` → 200; `/api/samples` → 200 |
+| **SELinux** | Required `chcon -t bin_t` on `.venv/bin` + `httpd_can_network_connect` |
+| **Scripts** | `scripts/pactpilot-api.service`, `pactpilot-web.service`, `vm-setup-remote.sh`, `docs/deploy/nginx-pactpilot.conf` |
+
+### Still required (one OCI console step)
+
+| Item | Detail |
+|------|--------|
+| **VCN ingress TCP 80** | Security list → add **HTTP (80)** from `0.0.0.0/0`. VM **firewalld** already allows `http`. Without VCN rule, browser/curl from internet **times out**. |
+| **Old Micro VM** | `pactpilot-vm` (193.123.178.230) — stop/terminate to free quota. |
+
+### Abandoned path (Micro)
+
+| Item | Detail |
+|------|--------|
+| **E2.1.Micro** | 498 MiB RAM; `dnf` OOM-killed; **shape not resizable**. |
 
 ### Not started (OCI)
 
@@ -55,15 +69,10 @@
 ### SSH reference
 
 ```powershell
-ssh -i "C:\Users\ankit\Documents\hackathon\ssh-key-2026-06-03.key" opc@193.123.178.230
+ssh -i "C:\Users\ankit\Documents\hackathon\ssh-key-2026-06-03.key" opc@140.238.78.156
 ```
 
-After resize, run on VM:
-
-```bash
-free -h   # Mem: total should be several GiB, not ~498Mi
-sudo dnf install -y nginx git nodejs npm python3-pip
-```
+Demo URL (after VCN port 80): **http://140.238.78.156** — login `demo@pactpilot.ai` / `demo1234`.
 
 ---
 
@@ -146,3 +155,4 @@ No `Dockerfile` or `railway.toml` exists in the repo yet; add in a small PR if w
 | Date | Update |
 |------|--------|
 | 2026-06-03 | Initial handoff: VM OOM, resize in progress, Railway backup assessed. |
+| 2026-06-04 | A1 instance live on 140.238.78.156; services up; VCN port 80 still needed for public access. |

@@ -1,0 +1,17 @@
+[Unit]
+Description=PactPilot FastAPI
+After=network.target
+
+[Service]
+Type=simple
+User=opc
+WorkingDirectory=/home/opc/essex-hack/backend
+Environment=HOME=/home/opc
+Environment=OCI_CONFIG_FILE=/home/opc/.oci/config
+# App loads backend/.env via pydantic-settings (WorkingDirectory).
+ExecStart=/home/opc/essex-hack/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
