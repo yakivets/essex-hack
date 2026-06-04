@@ -9,8 +9,12 @@ import type {
 } from "./types";
 import { mockAnalysis, mockSamples } from "./mockAnalysis";
 
-const BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") ?? "";
-const useMock = !BASE;
+const rawBase = import.meta.env.VITE_API_BASE_URL as string | undefined;
+/** Empty in production = same-origin (/api/...). Mock only in dev without an API URL. */
+const BASE = (rawBase ?? "").replace(/\/$/, "");
+const useMock =
+  import.meta.env.VITE_MOCK === "true" ||
+  (import.meta.env.DEV && (rawBase === undefined || rawBase === ""));
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
