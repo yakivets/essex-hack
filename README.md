@@ -14,6 +14,24 @@ search, and Compute for hosting.
 
 ---
 
+## Live demo
+
+**Try it:** http://140.238.78.156 · Demo login: `demo@pactpilot.ai` / `demo1234`
+
+| Processing (~45s, OCI GenAI) | Risk cockpit + highlights |
+|:---:|:---:|
+| ![Reviewing contract](docs/screenshots/01-processing.png) | ![Document cockpit](docs/screenshots/02-cockpit.png) |
+
+| Contract details | Grounded Q&A chat | Negotiation email |
+|:---:|:---:|:---:|
+| ![Contract details](docs/screenshots/03-contract-details.png) | ![RAG chat](docs/screenshots/04-rag-chat.png) | ![Negotiation co-pilot](docs/screenshots/05-negotiate-email.png) |
+
+| Branded PDF export (summary) | Branded PDF export (depth panels) |
+|:---:|:---:|
+| ![PDF export summary](docs/screenshots/06-pdf-export-summary.png) | ![PDF depth panels](docs/screenshots/07-pdf-export-depth.png) |
+
+---
+
 ## What it does
 
 A small-business founder pastes or uploads a contract and immediately sees:
@@ -148,12 +166,12 @@ Never change a field without updating all three.
 ## Project status
 
 - ✅ **Working & verified:** FastAPI + real OCI GenAI analysis, RAG chat with citations, vector
-  benchmarks (in-memory, real CUAD corpus), accounts (JWT) + saved-history dashboard, sign-in-to-unlock
-  teaser, client-side negotiation-email co-pilot, full redesigned UI (no-scroll cockpit, dark mode,
-  animated processing, branded PDF export). Runs end-to-end on real OCI **and** offline (mock/canned).
-- 🟡 **Built, not yet connected:** Oracle ADB 23ai native vector store (currently using the in-memory
-  fallback — code is ready, just needs `ADB_*` + a wallet). Accounts run on local SQLite by default.
-- ⏳ **Not started:** OCI Object Storage, deployment to OCI Compute, the multi-agent pipeline
+  benchmarks (Oracle ADB 23ai on the deployed VM), accounts (JWT) + saved-history dashboard,
+  sign-in-to-unlock teaser, client-side negotiation-email co-pilot, full redesigned UI (no-scroll
+  cockpit, dark mode, animated processing, branded PDF export). **Live on OCI Compute:**
+  http://140.238.78.156 — also runs offline (mock/canned) for local dev.
+- 🟡 **Stretch / roadmap:** OCI Document AI OCR for scanned PDFs (dev-tested on branch
+  `feat/document-ai-ocr`), OCI Object Storage for ephemeral uploads, multi-agent pipeline
   (designed in [`docs/09-multi-agent-plan.md`](docs/09-multi-agent-plan.md)).
 
 Honest notes: analysis is currently **one structured LLM call** (multi-agent is the next step), and
