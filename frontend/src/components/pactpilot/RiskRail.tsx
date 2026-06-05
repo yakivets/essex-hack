@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download, Flag, MessageCircleQuestion, MessageSquare } from "lucide-react";
 import { ChatPanel } from "./ChatPanel";
-import { RiskBadge, riskColor, riskLabel } from "./risk";
+import { RiskBadge, RiskGauge, riskColor, riskLabel } from "./risk";
 import { exportPdf } from "@/lib/exportPdf";
 import type { AnalysisResult, Clause } from "@/lib/types";
 
@@ -18,48 +18,6 @@ interface Props {
   onAskAbout: (clauseId: string) => void;
   onClearPrefill: () => void;
   onCitationClick: (clauseId: string) => void;
-}
-
-function Gauge({ score, level }: { score: number; level: "high" | "medium" | "low" }) {
-  const [v, setV] = useState(0);
-  useEffect(() => {
-    let raf = 0;
-    const start = performance.now();
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / 900);
-      setV((1 - Math.pow(1 - p, 3)) * score);
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [score]);
-  const R = 46;
-  const C = 2 * Math.PI * R;
-  return (
-    <div className="relative w-[112px] h-[112px] shrink-0">
-      <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-        <title>Risk score {score} of 100</title>
-        <circle cx="60" cy="60" r={R} fill="none" stroke="var(--border)" strokeWidth="9" />
-        <circle
-          cx="60"
-          cy="60"
-          r={R}
-          fill="none"
-          stroke={riskColor(level)}
-          strokeWidth="9"
-          strokeLinecap="round"
-          strokeDasharray={C}
-          strokeDashoffset={C * (1 - v / 100)}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="font-display text-3xl font-semibold tabular tracking-tight">
-          {Math.round(v)}
-        </div>
-        <div className="text-[10px] text-tertiary -mt-0.5">of 100</div>
-      </div>
-    </div>
-  );
 }
 
 function Fairness({ score, label }: { score: number; label: string }) {
@@ -179,7 +137,7 @@ export function RiskRail(props: Props) {
       {/* Verdict header */}
       <div className="shrink-0 border-b border-border p-4">
         <div className="flex items-start gap-4">
-          <Gauge score={v.risk_score} level={v.risk_level} />
+          <RiskGauge score={v.risk_score} level={v.risk_level} />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
               <span

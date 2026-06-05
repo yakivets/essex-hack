@@ -142,9 +142,6 @@ export function UploadHero({ onSubmit }: Props) {
         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
           <span className="w-1.5 h-1.5 rounded-full bg-risk-low" /> Private · deleted after analysis
         </span>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary" /> No account needed
-        </span>
       </div>
     </div>
   );

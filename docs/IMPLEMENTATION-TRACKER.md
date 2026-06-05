@@ -4,8 +4,8 @@ _Single source of truth for **what's built** and **whether it actually works**. 
 a feature lands or its status changes. Pair with [`STATUS.md`](STATUS.md) (run/resume guide) and the
 root [`README.md`](../README.md) (overview)._
 
-_Last updated: 2026-06-03. All work below is **committed and merged to `main`** (`mykyta-dev` kept
-for ongoing work)._
+_Last updated: 2026-06-03. All work below is **committed** on `mykyta-dev`. For a narrative feature
+catalogue see [`FEATURES.md`](FEATURES.md)._
 
 ## Legend
 - ✅ **Working** — implemented and verified (how it was checked is noted).
@@ -21,6 +21,10 @@ for ongoing work)._
 | Analysis pipeline (LLM → structured result) | ✅ Working (~30–45s, single LLM call) |
 | Vector benchmarks (real CUAD corpus, in-memory) | ✅ Working |
 | RAG chat (grounded + citations) | ✅ Working |
+| Accounts (register/login, JWT) | ✅ Working (SQLite default) |
+| Saved-history dashboard (save/list/reopen) | ✅ Working |
+| Sign-in-to-unlock blur teaser | ✅ Working |
+| Negotiation-email co-pilot (client-side) | ✅ Working |
 | Frontend — redesigned no-scroll cockpit | ✅ Built & runs · 🟡 live click-through vs real backend unconfirmed |
 | Oracle ADB 23ai vector store | 🟡 Code written, not connected (in-memory fallback live) |
 | Multi-agent analysis | ⏳ Designed only (`docs/09`) |
@@ -35,8 +39,10 @@ for ongoing work)._
 | FastAPI app + CORS + `/health` | ✅ | HTTP `GET /health` → `{"status":"ok","fake_oci":false}` |
 | `GET /api/samples` | ✅ | HTTP returns 3 samples |
 | `POST /api/analyze` (file/text/sample) | ✅ | HTTP sample run → valid `AnalysisResult` |
-| `GET /api/analysis/{id}` | ✅ | TestClient 200 + 404 for missing |
+| `GET /api/analysis/{id}` (cache → DB fallback) | ✅ | TestClient 200 + 404 for missing |
 | `POST /api/chat` | ✅ | HTTP real RAG answer with citations |
+| `POST /api/auth/register` · `/login` · `GET /me` | ✅ | HTTP register→token→me round-trip |
+| `GET` · `POST /api/analyses` (save/list) | ✅ | HTTP save then list returns the row |
 | Pydantic `schemas.py` (mirrors `types.ts`) | ✅ | Import + response validation |
 | In-memory TTL result cache | ✅ | Chat/refresh-by-id works |
 | `FAKE_OCI` toggle (canned vs real) | ✅ | Both paths exercised |
@@ -84,7 +90,24 @@ for ongoing work)._
 | `scripts/ingest_cuad.py` | ✅ | Loads corpus (in-memory verified; Oracle path coded) |
 | `scripts/smoke_oci.py` | ✅ | chat→embed→analysis all pass |
 
-## 5. Frontend (redesigned cockpit)
+## 5. Accounts, dashboard & negotiation
+| Item | Status | Verified via |
+|---|---|---|
+| Email/password register + login | ✅ | bcrypt hash + HS256 JWT (`auth.py`, `auth_routes.py`) |
+| `current_user` / `optional_user` deps | ✅ | Protected routes 401 without a token |
+| SQLAlchemy `User` + `Analysis` models | ✅ | `models/db_models.py`; tables auto-created on startup |
+| Accounts DB = SQLite (default) | ✅ | `DATABASE_URL` (swappable to Oracle `oracle+oracledb://`) |
+| Save analysis to account (idempotent) | ✅ | `POST /api/analyses`; re-save returns existing row |
+| Dashboard history list (newest first) | ✅ | `GET /api/analyses` → `AnalysisSummary[]` |
+| Reopen saved contract after cache TTL | ✅ | `GET /api/analysis/{id}` DB fallback (owner-checked) |
+| Contract-type label (keyword scan) | ✅ | `_guess_contract_type` (no extra LLM call) |
+| Frontend `AuthModal` / `auth.tsx` context | ✅ | Token in localStorage, attached by `api.ts` |
+| `Dashboard` component | ✅ | Lists + reopens saved analyses |
+| `BlurTeaser` sign-in-to-unlock | ✅ | Anon sees verdict; full report blurred until login |
+| Auto-save on login while viewing | ✅ | `index.tsx` effect (idempotent via `savedIds`) |
+| Negotiation email (`NegotiateModal`/`Panel`) | ✅ | `lib/negotiationEmail.ts`, collaborative/firm tones |
+
+## 6. Frontend (redesigned cockpit)
 | Item | Status | Verified via |
 |---|---|---|
 | Deps installed (npm; bun not present) | ✅ | `npm install` 482 pkgs, 0 vuln |
@@ -102,7 +125,7 @@ for ongoing work)._
 | 3 risk-tiered samples (danger/suspicious/legit) | ✅ | Mock ids synced to backend (`643c7a3`) |
 | **Live UI click-through vs real backend** | 🟡 | **Not yet confirmed by a real upload in the browser** |
 
-## 6. Infra / deploy / storage
+## 7. Infra / deploy / storage
 | Item | Status | Verified via |
 |---|---|---|
 | OCI Object Storage (`storage.py`) | ⏳ | Not implemented (ephemeral raw-file store) |
@@ -111,10 +134,11 @@ for ongoing work)._
 | Serve frontend from OCI (nginx, same origin) | ⏳ | Not started |
 | Oracle ADB 23ai provisioned + wallet | ⏳ | Not started (in-memory fallback used) |
 
-## 7. Docs / housekeeping
+## 8. Docs / housekeeping
 | Item | Status | Notes |
 |---|---|---|
 | Root `README.md` | ✅ | Full overview + setup + run |
+| `docs/FEATURES.md` | ✅ | Full feature catalogue (this version) |
 | `backend/README.md` · `frontend/README.md` | ✅ | Per-folder, context-specific |
 | `CLAUDE.md` | ✅ | Refreshed status |
 | `STATUS.md` · this tracker | ✅ | Up to date |

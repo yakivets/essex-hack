@@ -5,8 +5,7 @@ the configured vector store. With Oracle ADB 23ai configured (ADB_DSN set) this
 populates the native VECTOR table; otherwise it exercises the in-memory store.
 
 Run from the backend dir:
-    .\.venv\Scripts\python.exe -m scripts.ingest_cuad
-    # or: python scripts/ingest_cuad.py
+    python -m scripts.ingest_cuad
 
 Idempotency: re-running inserts duplicates into Oracle. To rebuild, drop/truncate
 the table first (or just run once). The in-memory store is per-process.

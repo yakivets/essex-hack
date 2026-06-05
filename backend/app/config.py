@@ -46,8 +46,17 @@ class Settings(BaseSettings):
     adb_password: str = ""
     adb_dsn: str = ""          # e.g. pactpilot_high (from tnsnames.ora in the wallet)
     tns_admin: str = ""        # path to the unzipped wallet (sets TNS_ADMIN)
+    # Password set when downloading the wallet zip (only if ewallet.p12 needs it).
+    wallet_password: str = ""
     # Vector dimension. Fake embeddings + Cohere v3 models are 1024-dim.
     embed_dim: int = 1024
+
+    # Accounts + dashboard. SQLite locally; swap to OCI Oracle by changing
+    # DATABASE_URL to oracle+oracledb://ADMIN:...@adb_high (same SQLAlchemy driver).
+    database_url: str = "sqlite:///./pactpilot.db"
+    # HS256 secret for signing JWTs. Override in .env for anything but local dev.
+    jwt_secret: str = "dev-secret-change-me"
+    jwt_expire_hours: int = 168  # 7 days
 
     @property
     def use_oracle(self) -> bool:
